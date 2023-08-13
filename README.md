@@ -3,12 +3,17 @@
 A personal finance app that tracks expenses, creates budgets and provides money-saving tips.
 
 ---
+
+## Relational model database
+
+![Relational model](https://github.com/EmSanchezM/BudgetWise/tree/main/public/relational-model.png)
+
 ## Development
 
 Development mode uses [Vite's development server](https://vitejs.dev/). The `dev` command will server-side render (SSR) the output during development.
 
 ```shell
-pnpm start # or `yarn start`
+npm start # or `yarn start`
 ```
 
 > Note: during dev mode, Vite may request a significant number of `.js` files. This does not represent a Qwik production build.

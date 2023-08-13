@@ -11,7 +11,62 @@ datasource db {
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
+  id    String     @id @default(cuid())
   email String  @unique
-  name  String?
+  password String
+  firstName  String
+  lastName  String
+  accounts Accounts[]
+  budgets Budgets[]
+  transactions Transactions[]
+}
+
+model Accounts {
+  id    String     @id @default(cuid())
+  name String
+  numberAccount String @unique
+  type String
+  balance String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Transactions {
+  id    String     @id @default(cuid())
+  date DateTime
+  hour DateTime
+  amount Decimal
+  description String
+  isExpense Boolean
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Categories {
+  id    String     @id @default(cuid())
+  name String
+  description String
+  color String
+
+  budgets   Budgets[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Budgets {
+  id    String     @id @default(cuid())
+  name String
+  initDate DateTime
+  finishDate DateTime
+  amout Decimal
+
+  categories Categories[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 }

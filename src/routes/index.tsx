@@ -15,11 +15,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Welcome to Qwik",
+  title: "BudgetWise App",
   meta: [
     {
       name: "description",
-      content: "Qwik site description",
+      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
     },
   ],
 };

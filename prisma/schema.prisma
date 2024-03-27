@@ -36,6 +36,7 @@ model Transaction {
   name String
   date Int
   amount Float
+  currency String
   description String
   isExpense Boolean
   userId Int
@@ -48,6 +49,7 @@ model Budget {
   initDate Int
   finishDate Int
   amount Float
+  currency String
   categories Category[]
   userId Int
   user User @relation(fields: [userId], references: [id])

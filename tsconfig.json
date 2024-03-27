@@ -22,5 +22,5 @@
     }
   },
   "files": [".eslintrc.mts"],
-  "include": ["src", "./*.d.ts", "./*.config.ts", "./postcss.config.ts"]
+  "include": ["src", "./*.d.ts", "./*.config.ts"]
 }

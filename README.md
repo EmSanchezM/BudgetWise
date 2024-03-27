@@ -6,7 +6,7 @@ A personal finance app that tracks expenses, creates budgets and provides money-
 
 ## Relational model
 
-![](https://raw.githubusercontent.com/EmSanchezM/BudgetWise/main/relational-model.png)
+![](https://raw.githubusercontent.com/EmSanchezM/BudgetWise/main/public/relational-model.png)
 
 ## Development
 

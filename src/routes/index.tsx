@@ -1,16 +1,14 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
+import { About, Feature, Pricing } from "~/components/home";
 
 export default component$(() => {
   return (
-    <main class="container flex items-center p-4 mx-auto min-h-screen justify-center bg-blue-500">
-      <h1 class="text-center">Hi 👋</h1>
-      <p>
-        Can't wait to see what you build with qwik!
-        <br />
-        Happy coding.
-      </p>
-    </main>
+    <>
+      <About />
+      <Feature />
+      <Pricing />
+    </>
   );
 });
 

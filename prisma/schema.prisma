@@ -19,16 +19,18 @@ model User {
   accounts Account[]
   budgets Budget[]
   transactions Transaction[]
+  @@index([email])
 }
 
 model Account {
   id    Int     @id @default(autoincrement())
   name String
-  numberAccount String
+  numberAccount String @unique
   type String
   balance Float
   userId Int
   user User @relation(fields: [userId], references: [id])
+  @@index([numberAccount])
 }
 
 model Transaction {

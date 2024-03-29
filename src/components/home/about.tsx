@@ -10,7 +10,7 @@ export const About = component$(() => {
           <p class="text-black mt-4 mb-6">
             A personal finance app that tracks expenses, creates budgets and provides money-saving tips.
           </p>
-          <ButtonPrimary>Get Started</ButtonPrimary>
+          <ButtonPrimary href="/sign-up">Get Started</ButtonPrimary>
         </div>
         <div class="flex w-ful">
           <div class="h-full w-full">

@@ -30,8 +30,8 @@ export const Header = component$(() => {
             >Pricing</a>
           </ul>
           <div class="col-start-10 col-end-12 font-medium flex justify-end items-center">
-            <Link href="/" class="text-black mx-2 sm:mx-4 capitalize tracking-wide hover:text-orange-500 transition-all">Sign in</Link>
-            <ButtonOutline>Sign up</ButtonOutline>
+            <Link href="/sign-in" class="text-black mx-2 sm:mx-4 capitalize tracking-wide hover:text-orange-500 transition-all">Sign in</Link>
+            <ButtonOutline href="/sign-up">Sign up</ButtonOutline>
           </div>
         </nav>
       </header>

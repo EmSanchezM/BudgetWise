@@ -63,7 +63,7 @@ export const Pricing = component$(() => {
                   <p class="text-2xl text-black-600 text-center mb-4 ">
                     Free
                   </p>
-                  <ButtonOutline>Select</ButtonOutline>
+                  <ButtonOutline href="/">Select</ButtonOutline>
                 </div>
               </main>
             </article>
@@ -93,7 +93,7 @@ export const Pricing = component$(() => {
                   <p class="text-2xl text-black-600 text-center mb-4 ">
                     Standard
                   </p>
-                  <ButtonOutline>Select</ButtonOutline>
+                  <ButtonOutline href="/">Select</ButtonOutline>
                 </div>
               </main>
             </article>
@@ -123,7 +123,7 @@ export const Pricing = component$(() => {
                   <p class="text-2xl text-black-600 text-center mb-4 ">
                     Premium
                   </p>
-                  <ButtonOutline>Select</ButtonOutline>
+                  <ButtonOutline href="/">Select</ButtonOutline>
                 </div>
               </main>
             </article>

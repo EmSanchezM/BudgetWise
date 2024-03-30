@@ -2,10 +2,20 @@ import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, zod$ } from "@builder.io/qwik-city";
 
 import orm from "~/lib/orm";
+import { generateFromPassword } from "~/lib/utils";
 import { SignUpSchemaValidation } from "~/lib/validation-schemes";
 
 export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
-  const user = await orm.user.create({ data });
+  const hashPassword = await generateFromPassword(data.password);
+
+  const payload = {
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    password: hashPassword
+  };
+
+  const user = await orm.user.create({ data: payload });
 
   if (!user.id) fail(500, { message: 'Error' });
 

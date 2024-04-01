@@ -62,6 +62,6 @@ model Category {
   name String
   description String
   color String
-  budgetId Int
-  budget Budget @relation(fields: [budgetId], references: [id])
+  budgetId Int?
+  budget Budget? @relation(fields: [budgetId], references: [id])
 }

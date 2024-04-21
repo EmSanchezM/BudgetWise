@@ -12,7 +12,7 @@ export const onRequest: RequestHandler = async ({
 
   if (!jwt) throw redirect(301, "/sign-in");
 
-  const user = await orm.user.findUnique({ where: { id: +jwt.value } })
+  const user = await orm.user.findUnique({ where: { id: +jwt.value }, select: { id: true, firstName: true, lastName: true, email: true } })
   sharedMap.set("user", user);
 
   return;

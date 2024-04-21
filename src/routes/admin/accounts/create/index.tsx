@@ -37,25 +37,25 @@ export default component$(() => {
     <>
       <Form action={action} class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
+          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Account Name</label>
           <div class="mt-2">
             <input id="name" name="name" type="text" autocomplete="name" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
           </div>
         </div>
         <div>
-          <label for="numberAccount" class="block text-sm font-medium leading-6 text-gray-900">Number account</label>
+          <label for="numberAccount" class="block text-sm font-medium leading-6 text-gray-900">Account Number</label>
           <div class="mt-2">
             <input id="numberAccount" name="numberAccount" type="text" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
           </div>
         </div>
         <div>
-          <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Type</label>
+          <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Account Type</label>
           <div class="mt-2">
             <input id="type" name="type" type="text" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
           </div>
         </div>
         <div>
-          <label for="balance" class="block text-sm font-medium leading-6 text-gray-900">Balance</label>
+          <label for="balance" class="block text-sm font-medium leading-6 text-gray-900">Account Balance</label>
           <div class="mt-2">
             <input id="balance" name="balance" type="number" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
           </div>

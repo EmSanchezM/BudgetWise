@@ -13,7 +13,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise App",
+  title: "BudgetWise",
   meta: [
     {
       name: "description",

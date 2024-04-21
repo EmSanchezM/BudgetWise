@@ -38,7 +38,7 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Budgets",
+  title: "BudgetWise | Budgets",
   meta: [
     {
       name: "description",

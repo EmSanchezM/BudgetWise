@@ -28,6 +28,7 @@ model Account {
   numberAccount String @unique
   type String
   balance Float
+  transactions Transaction[]
   userId Int
   user User @relation(fields: [userId], references: [id])
   @@index([numberAccount])
@@ -36,11 +37,13 @@ model Account {
 model Transaction {
   id    Int     @id @default(autoincrement())
   name String
-  date Int
+  transactionDate DateTime
   amount Float
   currency String
   description String
   isExpense Boolean
+  accountId Int
+  account Account @relation(fields: [accountId], references: [id])
   userId Int
   user User @relation(fields: [userId], references: [id])
 }

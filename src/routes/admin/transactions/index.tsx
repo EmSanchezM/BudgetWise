@@ -3,14 +3,21 @@ import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 
 import orm from "~/lib/orm";
 
-export const useAccounts = routeLoader$(async () => {
-  const accounts = await orm.account.findMany({
+export const useTransactions = routeLoader$(async () => {
+  const transactions = await orm.transaction.findMany({
     select: {
       id: true,
       name: true,
-      numberAccount: true,
-      balance: true,
-      type: true,
+      amount: true,
+      currency: true,
+      transactionDate: true,
+      description: true,
+      isExpense: true,
+      account: {
+        select: {
+          name: true,
+        }
+      },
       user: {
         select: {
           firstName: true,
@@ -20,17 +27,17 @@ export const useAccounts = routeLoader$(async () => {
     }
   });
 
-  return accounts;
+  return transactions;
 });
 
 export default component$(() => {
-  const accounts = useAccounts();
+  const transactions = useTransactions();
 
   return (
     <>
-      <h1>Accounts</h1>
+      <h1>Transactions</h1>
       {
-        JSON.stringify(accounts.value, null, 2)
+        JSON.stringify(transactions.value, null, 2)
       }
     </>
   );

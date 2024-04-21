@@ -1,5 +1,5 @@
-export { Header } from "./navigation/header";
-export { Footer } from "./navigation/footer";
-export { About } from "./about";
-export { Feature } from "./feature";
-export { Pricing } from "./pricing";
+export * from "./navigation/header";
+export * from "./navigation/footer";
+export * from "./about";
+export * from "./feature";
+export * from "./pricing";

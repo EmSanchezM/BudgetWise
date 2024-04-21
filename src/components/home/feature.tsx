@@ -40,10 +40,11 @@ export const Feature = component$(() => {
             own functions each feature.
           </p>
           <ul class="text-black self-start list-inside ml-8">
-            <li class="relative circle-check custom-list">Powerfull online protection.</li>
-            <li class="relative circle-check custom-list">Powerfull online protection.</li>
-            <li class="relative circle-check custom-list">Powerfull online protection.</li>
-            <li class="relative circle-check custom-list">Powerfull online protection.</li>
+            <li class="relative circle-check custom-list">Easy to use interface.</li>
+            <li class="relative circle-check custom-list">Track your income & expenses.</li>
+            <li class="relative circle-check custom-list">Customize your own categories.</li>
+            <li class="relative circle-check custom-list">Worldwide currencies.</li>
+            <li class="relative circle-check custom-list">We're there for you 24/7.</li>
           </ul>
         </div>
       </div>

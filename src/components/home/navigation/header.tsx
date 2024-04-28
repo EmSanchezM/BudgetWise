@@ -1,7 +1,8 @@
 import { component$, useStore } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 
-import { ButtonOutline } from "~/components/shared";
+import { ButtonOutline, Dropdown } from "~/components/shared";
+import { LockIcon, SettingsIcon, UserProfileIcon } from "~/components/shared/icons";
 
 export const Header = component$(() => {
   const activeLink = useStore<{ value: string | null }>({ value: null });
@@ -30,6 +31,22 @@ export const Header = component$(() => {
             >Pricing</a>
           </ul>
           <div class="col-start-10 col-end-12 font-medium flex justify-end items-center">
+            <Dropdown
+              title='Em Sanchez'
+              size='sm'
+              style='font-medium tracking-wide border border-orange-400 bg-white-500 outline-none rounded-l-full rounded-r-full capitalize'
+              options={[
+                {
+                  href: '/', title: 'Settings', icon: <SettingsIcon />
+                },
+                {
+                  href: '/', title: 'Profile', icon: <UserProfileIcon />
+                },
+                {
+                  href: '/', title: 'Logout', icon: <LockIcon />
+                },
+              ]}
+            />
             <Link href="/sign-in" class="text-black mx-2 sm:mx-4 capitalize tracking-wide hover:text-orange-500 transition-all">Sign in</Link>
             <ButtonOutline href="/sign-up">Sign up</ButtonOutline>
           </div>

@@ -7,7 +7,6 @@ export const CreateTransactionSchemaValidation = {
   currency: z.string({ required_error: 'Currency is required' }).min(2, 'Currency minimum 3 characters'),
   description: z.string({ required_error: 'Description is required '}),
   account: z.coerce.number({ required_error: 'Account is required'}).min(1, "Account minimum 1"),
-  typeTransaction: z.string({ required_error: 'Type transaction is required'}),
 }
 
 export const UpdateTransactionSchemaValidation = {
@@ -17,5 +16,4 @@ export const UpdateTransactionSchemaValidation = {
   currency: z.string({ required_error: 'Currency is required' }).min(2, 'Currency minimum 3 characters').nullable(),
   description: z.string({ required_error: 'Description is required '}).nullable(),
   account: z.coerce.number({ required_error: 'Account is required'}).min(1, "Account minimum 1").nullable(),
-  typeTransaction: z.string().nullable(),
 }

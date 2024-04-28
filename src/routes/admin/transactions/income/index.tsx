@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.io/qwik-city";
 
 import orm from "~/lib/orm";
+import { currencies } from "~/lib/utils";
 import { CreateTransactionSchemaValidation } from "~/lib/validation-schemes";
 
 export const useAccounts = routeLoader$(async () => {
@@ -16,7 +17,7 @@ export const useAccounts = routeLoader$(async () => {
   return accounts
 })
 
-export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail, redirect }) => {
+export const useCreateIncomeTransaction = routeAction$(async (data, { sharedMap, fail, redirect }) => {
   const user = sharedMap.get('user') as {
     id: number;
     email: string;
@@ -32,7 +33,7 @@ export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail,
     currency: data.currency,
     description: data.description,
     accountId: data.account,
-    isExpense: data.typeTransaction === 'EXPENSE' ? true : false,
+    isExpense: false,
   }
 
   const transaction = await orm.transaction.create({
@@ -47,7 +48,7 @@ export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail,
 
 export default component$(() => {
   const accounts = useAccounts();
-  const action = useCreateTransaction();
+  const action = useCreateIncomeTransaction();
 
   return (
     <>
@@ -82,7 +83,16 @@ export default component$(() => {
         <div>
           <label for="currency" class="block text-sm font-medium leading-6 text-gray-900">Currency</label>
           <div class="mt-2">
-            <input id="currency" name="currency" type="text" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+            <select name="currency" id="currency" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" required>
+              <option value="">Select your currency</option>
+              {
+                currencies.map((currency) => {
+                  return (
+                    <option value={currency.value}>{currency.label}</option>
+                  )
+                })
+              }
+            </select>
           </div>
         </div>
         <div>
@@ -98,16 +108,6 @@ export default component$(() => {
           </div>
         </div>
         <div>
-          <label for="typeTransaction" class="block text-sm font-medium leading-6 text-gray-900">Type transaction</label>
-          <div class="mt-2">
-            <select name="typeTransaction" id="typeTransaction" class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
-              <option value="">Select your type transaction</option>
-              <option value="EXPENSE">Expense</option>
-              <option value="INCOME">Income</option>
-            </select>
-          </div>
-        </div>
-        <div>
           <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create</button>
         </div>
       </Form >
@@ -116,7 +116,7 @@ export default component$(() => {
 })
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Create budget",
+  title: "BudgetWise | Create income",
   meta: [
     {
       name: "description",

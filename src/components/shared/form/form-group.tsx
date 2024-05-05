@@ -5,7 +5,7 @@ interface FormGroupProps {
   labelName: string;
   id: string;
   name: string;
-  type: string;
+  type: 'text' | 'number' | 'select' | 'date' | 'password' | 'email';
   errors?: string[] | undefined;
   items?: { id: number | string; name: string; }[]
 }

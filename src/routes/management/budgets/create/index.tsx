@@ -23,18 +23,16 @@ export const useCategories = routeLoader$(async () => {
 export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redirect }) => {
   const user = sharedMap.get('user') as UserAuth;
 
-  const payload = {
-    userId: +user.id,
-    name: data.name,
-    initDate: data.initDate,
-    finishDate: data.finishDate,
-    amount: data.amount,
-    currency: data.currency,
-    categoryId: data.category,
-  }
-
   const budget = await orm.budget.create({
-    data: payload,
+    data: {
+      userId: user.id,
+      name: data.name,
+      initDate: data.initDate,
+      finishDate: data.finishDate,
+      amount: data.amount,
+      currency: data.currency,
+      categoryId: data.category,
+    },
     select: { id: true }
   });
 

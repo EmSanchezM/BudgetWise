@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, zod$ } from "@builder.io/qwik-city";
+import { FormGroup } from "~/components/shared/form";
 import { PUBLIC_ROUTES } from "~/lib/constants";
 
 import orm from "~/lib/orm";
@@ -34,36 +35,38 @@ export default component$(() => {
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up</h2>
         </div>
         <Form action={action} class="space-y-6">
-          <div>
-            <label for="text" class="block text-sm font-medium leading-6 text-gray-900">First name</label>
-            <div class="mt-2">
-              <input id="firstName" name="firstName" type="text" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-            </div>
-          </div>
-          <div>
-            <label for="text" class="block text-sm font-medium leading-6 text-gray-900">Last name</label>
-            <div class="mt-2">
-              <input id="lastName" name="lastName" type="text" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-            </div>
-          </div>
-          <div>
-            <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
-            <div class="mt-2">
-              <input id="email" name="email" type="email" autocomplete="email" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-            </div>
-          </div>
-          <div>
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
-            <div class="mt-2">
-              <input id="password" name="password" type="password" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-            </div>
-          </div>
-          <div>
-            <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Confirm password</label>
-            <div class="mt-2">
-              <input id="password" name="password" type="password" required class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-            </div>
-          </div>
+          <FormGroup
+            type="text"
+            labelName="First name"
+            id="firstName"
+            name="firstName"
+            errors={action.value?.fieldErrors?.firstName}
+          />
+
+          <FormGroup
+            type="text"
+            labelName="Last name"
+            id="lastName"
+            name="lastName"
+            errors={action.value?.fieldErrors?.lastName}
+          />
+
+          <FormGroup
+            type="email"
+            labelName="Email address"
+            id="email"
+            name="email"
+            errors={action.value?.fieldErrors?.email}
+          />
+
+          <FormGroup
+            type="password"
+            labelName="Password"
+            id="password"
+            name="password"
+            errors={action.value?.fieldErrors?.password}
+          />
+
           <div>
             <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
           </div>

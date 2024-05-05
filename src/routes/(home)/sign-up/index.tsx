@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, zod$ } from "@builder.io/qwik-city";
+import { PUBLIC_ROUTES } from "~/lib/constants";
 
 import orm from "~/lib/orm";
 import { generateFromPassword } from "~/lib/utils";
@@ -19,7 +20,7 @@ export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
 
   if (!user.id) fail(500, { message: 'Error' });
 
-  redirect(301, '/sign-in');
+  redirect(301, PUBLIC_ROUTES.SIGN_IN);
 }, zod$(SignUpSchemaValidation));
 
 export default component$(() => {

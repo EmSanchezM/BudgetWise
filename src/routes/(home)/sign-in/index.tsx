@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { Form, routeAction$, zod$ } from "@builder.io/qwik-city";
 
 import orm from "~/lib/orm";
+import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { comparePasswordAndHash } from "~/lib/utils";
 import { SignInSchemaValidation } from "~/lib/validation-schemes";
 
@@ -17,7 +18,7 @@ export const useSignIn = routeAction$(async (data, { fail, redirect, cookie }) =
 
   cookie.set("jwt", user!.id, { secure: true, path: "/" });
 
-  redirect(301, '/admin');
+  redirect(301, MANAGEMENT_ROUTES.DAHSBOARD);
 }, zod$(SignInSchemaValidation));
 
 export default component$(() => {
@@ -48,7 +49,6 @@ export default component$(() => {
           </div>
         </Form>
       </div>
-
     </section>
   )
 })

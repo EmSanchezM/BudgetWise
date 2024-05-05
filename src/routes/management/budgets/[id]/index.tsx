@@ -1,44 +1,48 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-
 import orm from "~/lib/orm";
 
-export const useBudgets = routeLoader$(async () => {
-  const budgets = await orm.budget.findMany({
+const useBudget = routeLoader$(async ({ params, fail }) => {
+  const budgetID = +params.id
+
+  const budget = orm.budget.findUnique({
+    where: { id: budgetID },
     select: {
-      id: true,
       name: true,
-      amount: true,
-      currency: true,
       initDate: true,
       finishDate: true,
-      user: {
+      amount: true,
+      currency: true,
+      category: {
         select: {
-          firstName: true,
-          lastName: true,
+          name: true,
+          color: true,
         }
       }
     }
   });
 
-  return budgets;
-});
+  if (!budget) fail(404, { message: 'Budget not found' });
+
+  return budget;
+})
 
 export default component$(() => {
-  const budgets = useBudgets();
+  const budget = useBudget();
 
   return (
     <>
-      <h1>Budgets</h1>
+      <h1>Budget detail</h1>
+      <hr />
       {
-        JSON.stringify(budgets.value, null, 2)
+        JSON.stringify(budget.value, null, 2)
       }
     </>
-  );
+  )
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise | Budgets",
+  title: "BudgetWise App | Detail budget",
   meta: [
     {
       name: "description",

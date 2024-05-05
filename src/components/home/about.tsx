@@ -14,7 +14,13 @@ export const About = component$(() => {
         </div>
         <div class="flex w-ful">
           <div class="h-full w-full">
-            <img src="./girl-planning-budget-with-tablet-and-piggy-bank.png" width={612} height={383} alt="BudgetWise Ilustration" />
+            <img
+              src="./9898616.jpg"
+              class="h-full w-full object-cover"
+              width={612}
+              height={383}
+              alt="BudgetWise Ilustration"
+            />
           </div>
         </div>
       </div>

@@ -28,6 +28,7 @@ model Account {
   name String
   numberAccount String @unique
   type String
+  currency String
   balance Float
   transactions Transaction[]
   userId Int

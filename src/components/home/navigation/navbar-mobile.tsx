@@ -12,17 +12,17 @@ export const NavbarMobile = component$(({ handleActiveRoute }: NavbarMobileProps
     <nav class="fixed lg:hidden bottom-0 left-0 right-0 z-20 px-4 sm:px-8 shadow-transparent">
       <div class="bg-white-500 sm:px-3">
         <ul class="flex w-full justify-between items-center text-black">
-          <ButtonLink href="#about" isMobile onClick={handleActiveRoute}>
+          <ButtonLink href="/" isMobile onClick={handleActiveRoute}>
             <InfoIcon />
             About
           </ButtonLink>
-          <ButtonLink href="#feature" isMobile onClick={handleActiveRoute} >
+          <ButtonLink href="/feature" isMobile onClick={handleActiveRoute} >
             <WorldIcon />
-            About
+            Feature
           </ButtonLink>
-          <ButtonLink href="#pricing" isMobile onClick={handleActiveRoute}>
+          <ButtonLink href="/pricing" isMobile onClick={handleActiveRoute}>
             <MoneyIcon />
-            About
+            Pricing
           </ButtonLink>
         </ul>
       </div>

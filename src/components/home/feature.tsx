@@ -17,7 +17,7 @@ export const Feature = component$(() => {
     }
 
     li.circle-check:before {
-      background-image: url(./checklist.svg);
+      background-image: url(/checklist.svg);
       left: -.7em;
       top: -.4em
     }
@@ -28,7 +28,7 @@ export const Feature = component$(() => {
       <div class="grid grid-flow-row sm:grid-flow-col grid-cols-1 sm:grid-cols-2 gap-8 py-8 my-12">
         <div class="flex w-full justify-end">
           <div class="h-full w-full p-4">
-            <img src="./budget-wise.jpg" width={612} height={383} alt="BudgetWise Ilustration" />
+            <img src="/budget-wise.jpg" width={612} height={383} alt="BudgetWise Ilustration" />
           </div>
         </div>
         <div class="flex flex-col items-end justify-center ml-auto w-full lg:w-9/12">

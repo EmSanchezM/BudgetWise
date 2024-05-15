@@ -6,21 +6,21 @@ import { FormGroup } from "~/components/shared/form";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { UserAuth } from "~/lib/models";
 import orm from "~/lib/orm";
+import { currencies } from "~/lib/utils";
 import { CreateAccountSchemaValidation } from "~/lib/validation-schemes";
 
 export const useCreateAccount = routeAction$(async (data, { sharedMap, fail, redirect }) => {
   const user = sharedMap.get('user') as UserAuth;
 
-  const payload = {
-    userId: +user.id,
-    name: data.name,
-    numberAccount: data.numberAccount,
-    type: data.type,
-    balance: data.balance,
-  }
-
   const account = await orm.account.create({
-    data: payload,
+    data: {
+      userId: +user.id,
+      name: data.name,
+      numberAccount: data.numberAccount,
+      type: data.type,
+      currency: data.currency,
+      balance: data.balance,
+    },
     select: { id: true }
   });
 
@@ -68,6 +68,15 @@ export default component$(() => {
           />
 
           <FormGroup
+            type="select"
+            labelName="Currency"
+            id="currency"
+            name="currency"
+            items={currencies.map(currency => ({ id: currency.value, name: currency.label }))}
+            errors={action.value?.fieldErrors?.currency}
+          />
+
+          <FormGroup
             type="number"
             labelName="Account Balance"
             id="balance"
@@ -85,7 +94,7 @@ export default component$(() => {
 })
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Create budget",
+  title: "BudgetWise | Create budget",
   meta: [
     {
       name: "description",

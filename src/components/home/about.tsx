@@ -15,7 +15,7 @@ export const About = component$(() => {
         <div class="flex w-ful">
           <div class="h-full w-full">
             <img
-              src="./9898616.jpg"
+              src="/9898616.jpg"
               class="h-full w-full object-cover"
               width={612}
               height={383}
@@ -29,7 +29,7 @@ export const About = component$(() => {
           <section class="flex items-center justify-start sm:justify-center py-4 sm:py-6 w-8/12 px-4 sm:w-auto mx-auto sm:mx-0">
             <article class="flex mx-auto w-40 sm:w-auto">
               <header class="flex items-center justify-center bg-orange-100 w-12 h-12 mr-6 rounded-full">
-                <img src="./girl-planning-budget-with-tablet-and-piggy-bank.png" class="h-6 w-6" width={24} height={24} alt="BudgetWise Ilustration" />
+                <img src="/girl-planning-budget-with-tablet-and-piggy-bank.png" class="h-6 w-6" width={24} height={24} alt="BudgetWise Ilustration" />
               </header>
               <main class="flex flex-col">
                 <p class="text-xl text-black-600 font-bold">

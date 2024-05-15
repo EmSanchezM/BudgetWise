@@ -6,3 +6,4 @@ export * from "./lock.icon";
 export * from "./info.icon";
 export * from "./world.icon";
 export * from "./money.icon";
+export * from "./check.icon";

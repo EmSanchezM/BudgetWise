@@ -1,5 +1,6 @@
 import { QRL, Slot, component$, useContext } from "@builder.io/qwik";
 import { HeaderContext } from "../home";
+import { Link } from "@builder.io/qwik-city";
 
 interface LinkProps {
   href: string;
@@ -21,12 +22,12 @@ export const ButtonLink = component$(({ href, isMobile = false, onClick }: LinkP
     `px-4 py-2 mx-4 cursor-pointer animation-hover inline-block relative ${isActiveRoute ? "text-orange-500 " : "text-neutral-900 hover:text-orange-500"}`;
 
   return (
-    <a
+    <Link
       href={href}
       onClick$={() => onClick(nameRoute)}
       class={classResponsive}
     >
       <Slot />
-    </a>
+    </Link>
   )
 });

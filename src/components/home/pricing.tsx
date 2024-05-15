@@ -19,7 +19,7 @@ export const Pricing = component$(() => {
   
     li.check:before {
       left: -.5em;
-      background-image: url(./jam_check.svg);
+      background-image: url(/jam_check.svg);
       top: -.5em;
       font-size: 400%
     }
@@ -40,7 +40,7 @@ export const Pricing = component$(() => {
             <article class="flex justify-center">
               <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
                 <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="./Free.png" width={145} height={165} alt="Free Plan" />
+                  <img src="/Free.png" width={145} height={165} alt="Free Plan" />
                 </div>
                 <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
                   Free Plan
@@ -70,7 +70,7 @@ export const Pricing = component$(() => {
             <article class="flex justify-center">
               <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
                 <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="./Standard.png" width={145} height={165} alt="Standard Plan" />
+                  <img src="/Standard.png" width={145} height={165} alt="Standard Plan" />
                 </div>
                 <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
                   Standard Plan
@@ -100,7 +100,7 @@ export const Pricing = component$(() => {
             <article class="flex justify-center">
               <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
                 <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="./Premium.png" width={145} height={165} alt="Premium Plan" />
+                  <img src="/Premium.png" width={145} height={165} alt="Premium Plan" />
                 </div>
                 <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
                   Premium Plan

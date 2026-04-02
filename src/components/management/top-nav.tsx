@@ -1,5 +1,6 @@
 import { $, component$, type Signal } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
+import { ThemeToggle } from "./theme-toggle";
 
 export interface TopNavUser {
   firstName: string;
@@ -48,7 +49,8 @@ export const TopNav = component$<TopNavProps>(({ user, isSidebarOpen }) => {
               </span>
             </Link>
           </div>
-          <div class="flex items-center">
+          <div class="flex items-center gap-3">
+            <ThemeToggle />
             <div class="flex items-center ms-3 gap-3">
               <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
                 {user.firstName.charAt(0)}

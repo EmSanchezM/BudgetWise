@@ -60,10 +60,19 @@ export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail,
     categoryId: data.category ? Number(data.category) : undefined,
   }
 
-  const transaction = await orm.transaction.create({
-    data: payload,
-    select: { id: true }
-  });
+  const isExpense = data.isExpense === 'true';
+  const amount = data.amount; // already in cents from validation transform
+
+  const [transaction] = await orm.$transaction([
+    orm.transaction.create({
+      data: payload,
+      select: { id: true }
+    }),
+    orm.account.update({
+      where: { id: data.account },
+      data: { balance: { increment: isExpense ? -amount : amount } }
+    })
+  ]);
 
   if (!transaction.id) return fail(500, { message: 'Error create transaction' });
 

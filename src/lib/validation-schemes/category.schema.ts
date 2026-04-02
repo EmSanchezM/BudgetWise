@@ -1,4 +1,4 @@
-import { z } from "@builder.io/qwik-city";
+import { z } from "zod";
 
 export const CreateCategorySchemaValidation = {
   name: z.string({ required_error: 'Name is required'}).min(2, 'Name minimum 2 characters'),

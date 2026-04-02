@@ -38,6 +38,8 @@
     "prisma:migrate:prod": "prisma migrate deploy",
     "prisma:seed": "tsx prisma/seed.ts",
     "start": "vite --open --mode ssr",
+    "test": "vitest",
+    "test:run": "vitest run",
     "qwik": "qwik"
   },
   "devDependencies": {
@@ -60,9 +62,12 @@
     "typescript": "5.9.3",
     "undici": "7.24.7",
     "vite": "6.4.1",
-    "vite-tsconfig-paths": "6.1.1"
+    "vite-tsconfig-paths": "6.1.1",
+    "vitest": "^4.1.2",
+    "zod": "^3.25.48"
   },
   "dependencies": {
-    "argon2": "0.44.0"
+    "argon2": "0.44.0",
+    "jose": "^6.2.2"
   }
 }

@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
+import { EmptyState } from "~/components/shared";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -19,6 +20,7 @@ export const useAccounts = routeLoader$(async ({ sharedMap }) => {
       numberAccount: true,
       balance: true,
       type: true,
+      currency: true,
       user: {
         select: {
           firstName: true,
@@ -41,7 +43,9 @@ export default component$(() => {
         <Link href="create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create account</Link>
       </header>
       <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {
+        {accounts.value.length === 0 ? (
+          <EmptyState title="No accounts yet" description="Create your first account to get started." />
+        ) : (
           accounts.value.map(account => {
             return (
               <article class="p-6 bg-white border border-gray-200 rounded-lg shadow">
@@ -51,7 +55,7 @@ export default component$(() => {
                 <p class="mb-3 font-normal text-gray-700">
                   <span>{account.user.firstName} {account.user.lastName}</span>
                   <br />
-                  {GetFormatterForCurrency('USD').format(fromCents(account.balance))}
+                  {GetFormatterForCurrency(account.currency).format(fromCents(account.balance))}
                   <span class="mb-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ms-3">{account.type}</span>
                 </p>
                 <Link href={`${account.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -66,7 +70,7 @@ export default component$(() => {
               </article>
             )
           })
-        }
+        )}
       </main>
     </section>
   );

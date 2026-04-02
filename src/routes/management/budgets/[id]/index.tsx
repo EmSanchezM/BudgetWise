@@ -36,13 +36,38 @@ export default component$(() => {
   const budget = useBudget();
 
   return (
-    <>
-      <h1>Budget detail</h1>
-      <hr />
-      {
-        JSON.stringify({ ...budget.value, amount: fromCents(budget.value.amount as number) }, null, 2)
-      }
-    </>
+    <div class="max-w-2xl">
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Budget Detail</h1>
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Name</span>
+          <p class="text-lg font-medium text-gray-900 dark:text-white">{budget.value.name}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Start Date</span>
+          <p class="text-lg font-medium text-gray-900 dark:text-white">{new Date(String(budget.value.initDate)).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">End Date</span>
+          <p class="text-lg font-medium text-gray-900 dark:text-white">{new Date(String(budget.value.finishDate)).toLocaleDateString()}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Amount</span>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{fromCents(budget.value.amount as number)}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Currency</span>
+          <p class="text-lg font-medium text-gray-900 dark:text-white">{budget.value.currency}</p>
+        </div>
+        <div>
+          <span class="text-sm text-gray-500 dark:text-gray-400">Category</span>
+          <div class="flex items-center gap-2 mt-1">
+            <span class="inline-block w-4 h-4 rounded-full" style={{ backgroundColor: budget.value.category?.color as string }}></span>
+            <p class="text-lg font-medium text-gray-900 dark:text-white">{budget.value.category?.name}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 });
 

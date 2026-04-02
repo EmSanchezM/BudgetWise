@@ -7,3 +7,4 @@ export { Icon } from "./icon";
 export { Chip } from "./chip";
 export { EmptyState } from "./empty-state";
 export { Pagination } from "./pagination";
+export { ConfirmDialog } from "./confirm-dialog";

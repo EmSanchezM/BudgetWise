@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/ui";
+import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -47,6 +47,8 @@ export const useDeleteBudget = routeAction$(async (data, { fail, sharedMap }) =>
 export default component$(() => {
   const budgets = useBudgets();
   const deleteBudget = useDeleteBudget();
+  const showDeleteDialog = useSignal(false);
+  const deleteId = useSignal<number | null>(null);
 
   return (
     <div class="space-y-8">
@@ -80,12 +82,9 @@ export default component$(() => {
                     <Link href={`${budget.id}`} class="p-1 text-outline hover:text-primary transition-colors">
                       <span class="material-symbols-outlined text-sm">edit</span>
                     </Link>
-                    <Form action={deleteBudget} class="inline">
-                      <input type="hidden" name="id" value={budget.id} />
-                      <button type="submit" class="p-1 text-outline hover:text-error transition-colors">
-                        <span class="material-symbols-outlined text-sm">delete</span>
-                      </button>
-                    </Form>
+                    <button type="button" onClick$={() => { deleteId.value = budget.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
+                      <span class="material-symbols-outlined text-sm">delete</span>
+                    </button>
                   </div>
                 </div>
                 <Link href={`${budget.id}`}>
@@ -106,6 +105,13 @@ export default component$(() => {
       )}
 
       <Pagination currentPage={budgets.value.page} totalPages={budgets.value.totalPages} baseUrl="/management/budgets" />
+
+      <ConfirmDialog open={showDeleteDialog} title="Delete budget?" description="This budget will be permanently removed. This action cannot be undone.">
+        <Form action={deleteBudget} onSubmitCompleted$={() => { showDeleteDialog.value = false; deleteId.value = null; }}>
+          <input type="hidden" name="id" value={deleteId.value ?? ''} />
+          <button type="submit" class="w-full py-3 rounded-xl font-bold text-sm bg-error text-on-error active:scale-95 transition-all">Delete</button>
+        </Form>
+      </ConfirmDialog>
     </div>
   );
 });

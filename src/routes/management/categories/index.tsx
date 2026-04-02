@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/ui";
+import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 import orm from "~/lib/orm";
 
 export const useCategories = routeLoader$(async ({ sharedMap, url }) => {
@@ -53,6 +53,8 @@ export const useDeleteCategory = routeAction$(async (data, { fail, sharedMap }) 
 export default component$(() => {
   const categories = useCategories();
   const deleteCategory = useDeleteCategory();
+  const showDeleteDialog = useSignal(false);
+  const deleteId = useSignal<number | null>(null);
 
   return (
     <div class="space-y-8">
@@ -113,12 +115,9 @@ export default component$(() => {
                       <Link href={`${category.id}`} class="p-1 text-outline hover:text-primary transition-colors">
                         <span class="material-symbols-outlined text-sm">edit</span>
                       </Link>
-                      <Form action={deleteCategory} class="inline">
-                        <input type="hidden" name="id" value={category.id} />
-                        <button type="submit" class="p-1 text-outline hover:text-error transition-colors">
-                          <span class="material-symbols-outlined text-sm">delete</span>
-                        </button>
-                      </Form>
+                      <button type="button" onClick$={() => { deleteId.value = category.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
+                        <span class="material-symbols-outlined text-sm">delete</span>
+                      </button>
                     </div>
                   </div>
                   {category.description && (
@@ -138,6 +137,13 @@ export default component$(() => {
       )}
 
       <Pagination currentPage={categories.value.page} totalPages={categories.value.totalPages} baseUrl="/management/categories" />
+
+      <ConfirmDialog open={showDeleteDialog} title="Delete category?" description="This category will be permanently removed. Transactions using it won't be affected.">
+        <Form action={deleteCategory} onSubmitCompleted$={() => { showDeleteDialog.value = false; deleteId.value = null; }}>
+          <input type="hidden" name="id" value={deleteId.value ?? ''} />
+          <button type="submit" class="w-full py-3 rounded-xl font-bold text-sm bg-error text-on-error active:scale-95 transition-all">Delete</button>
+        </Form>
+      </ConfirmDialog>
     </div>
   );
 });

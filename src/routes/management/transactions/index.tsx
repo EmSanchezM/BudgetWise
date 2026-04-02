@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/ui";
+import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -79,6 +79,8 @@ function formatDate(date: string | Date): string {
 export default component$(() => {
   const transactions = useTransactions();
   const deleteTransaction = useDeleteTransaction();
+  const showDeleteDialog = useSignal(false);
+  const deleteId = useSignal<number | null>(null);
 
   return (
     <div class="space-y-8">
@@ -166,12 +168,9 @@ export default component$(() => {
                   <Link href={`${tx.id}`} class="p-1 text-outline hover:text-primary transition-colors">
                     <span class="material-symbols-outlined text-sm">edit</span>
                   </Link>
-                  <Form action={deleteTransaction} class="inline">
-                    <input type="hidden" name="id" value={tx.id} />
-                    <button type="submit" class="p-1 text-outline hover:text-error transition-colors">
-                      <span class="material-symbols-outlined text-sm">delete</span>
-                    </button>
-                  </Form>
+                  <button type="button" onClick$={() => { deleteId.value = tx.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
+                    <span class="material-symbols-outlined text-sm">delete</span>
+                  </button>
                 </div>
               </div>
             </div>
@@ -180,6 +179,13 @@ export default component$(() => {
       )}
 
       <Pagination currentPage={transactions.value.page} totalPages={transactions.value.totalPages} baseUrl="/management/transactions" />
+
+      <ConfirmDialog open={showDeleteDialog} title="Delete transaction?" description="This transaction will be permanently removed and the account balance will be adjusted.">
+        <Form action={deleteTransaction} onSubmitCompleted$={() => { showDeleteDialog.value = false; deleteId.value = null; }}>
+          <input type="hidden" name="id" value={deleteId.value ?? ''} />
+          <button type="submit" class="w-full py-3 rounded-xl font-bold text-sm bg-error text-on-error active:scale-95 transition-all">Delete</button>
+        </Form>
+      </ConfirmDialog>
     </div>
   );
 });

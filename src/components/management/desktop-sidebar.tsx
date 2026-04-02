@@ -66,9 +66,9 @@ export const DesktopSidebar = component$<DesktopSidebarProps>(({ logoutAction })
               account_balance_wallet
             </span>
           </div>
-          <h1 class="font-black tracking-tighter text-slate-900 text-xl">The Curator</h1>
+          <h1 class="font-black tracking-tighter text-slate-900 text-xl">BudgetWise</h1>
         </div>
-        <p class="text-[11px] tracking-wide uppercase text-slate-500">Editorial Intelligence</p>
+        <p class="text-[11px] tracking-wide uppercase text-slate-500">Smart Finance</p>
       </div>
 
       {/* Main nav */}

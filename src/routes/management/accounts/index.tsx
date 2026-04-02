@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
+import { component$, useSignal } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/ui";
+import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -72,6 +72,8 @@ const typeIcons: Record<string, string> = {
 export default component$(() => {
   const accounts = useAccounts();
   const deleteAccount = useDeleteAccount();
+  const showDeleteDialog = useSignal(false);
+  const deleteId = useSignal<number | null>(null);
 
   const totalFormatted = fromCents(accounts.value.totalBalance).toLocaleString("en-US", { minimumFractionDigits: 2 });
   const [whole, decimal] = totalFormatted.split(".");
@@ -147,16 +149,14 @@ export default component$(() => {
                     <span class="material-symbols-outlined text-[16px]">visibility</span>
                     Detail
                   </Link>
-                  <Form action={deleteAccount}>
-                    <input type="hidden" name="id" value={account.id} />
-                    <button
-                      type="submit"
-                      class="flex items-center gap-1 px-4 py-2 bg-error-container/20 text-error rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-error-container/40 transition-colors"
-                    >
-                      <span class="material-symbols-outlined text-[16px]">delete</span>
-                      Delete
-                    </button>
-                  </Form>
+                  <button
+                    type="button"
+                    onClick$={() => { deleteId.value = account.id; showDeleteDialog.value = true; }}
+                    class="flex items-center gap-1 px-4 py-2 bg-error-container/20 text-error rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-error-container/40 transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                    Delete
+                  </button>
                 </div>
               </div>
             );
@@ -174,6 +174,23 @@ export default component$(() => {
       </Link>
 
       <Pagination currentPage={accounts.value.page} totalPages={accounts.value.totalPages} baseUrl="/management/accounts" />
+
+      {/* Delete confirmation */}
+      <ConfirmDialog
+        open={showDeleteDialog}
+        title="Delete account?"
+        description="This will permanently remove this account and all its data. This action cannot be undone."
+      >
+        <Form action={deleteAccount} onSubmitCompleted$={() => { showDeleteDialog.value = false; deleteId.value = null; }}>
+          <input type="hidden" name="id" value={deleteId.value ?? ''} />
+          <button
+            type="submit"
+            class="w-full py-3 rounded-xl font-bold text-sm bg-error text-on-error active:scale-95 transition-all"
+          >
+            Delete
+          </button>
+        </Form>
+      </ConfirmDialog>
     </div>
   );
 });

@@ -2,6 +2,7 @@ import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
+import { fromCents } from "~/lib/utils";
 
 export const useBudget = routeLoader$(async ({ params, fail, sharedMap }) => {
   const id = Number(params.id);
@@ -10,7 +11,7 @@ export const useBudget = routeLoader$(async ({ params, fail, sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
 
   const budget = await orm.budget.findUnique({
-    where: { id, userId: user.id },
+    where: { id, userId: user.id, deletedAt: null },
     select: {
       name: true,
       initDate: true,
@@ -39,7 +40,7 @@ export default component$(() => {
       <h1>Budget detail</h1>
       <hr />
       {
-        JSON.stringify(budget.value, null, 2)
+        JSON.stringify({ ...budget.value, amount: fromCents(budget.value.amount as number) }, null, 2)
       }
     </>
   )

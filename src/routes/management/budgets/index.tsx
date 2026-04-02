@@ -3,14 +3,15 @@ import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 
 import orm from "~/lib/orm";
-import { GetFormatterForCurrency } from "~/lib/utils";
+import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
 
 export const useBudgets = routeLoader$(async ({ sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
 
   const budgets = await orm.budget.findMany({
     where: {
-      userId: user.id
+      userId: user.id,
+      deletedAt: null
     },
     select: {
       id: true,
@@ -43,7 +44,7 @@ export default component$(() => {
                   <span class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{budget.name}</span>
                 </Link>
                 <p class="mb-3 font-normal text-gray-700">
-                  {GetFormatterForCurrency(budget.currency).format(budget.amount)}
+                  {GetFormatterForCurrency(budget.currency).format(fromCents(budget.amount))}
                   <br />
                   <span>{budget.initDate.toLocaleDateString()} - {budget.finishDate.toLocaleDateString()}</span>
                 </p>

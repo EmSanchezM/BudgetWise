@@ -11,7 +11,7 @@ export const useCategory = routeLoader$(async ({ params, fail, sharedMap }) => {
 
   const user = getAuthenticatedUser(sharedMap);
 
-  const category = await orm.category.findUnique({ where: { id, userId: user.id }, select: { id: true, name: true, description: true, color: true } });
+  const category = await orm.category.findUnique({ where: { id, userId: user.id, deletedAt: null }, select: { id: true, name: true, description: true, color: true } });
 
   if (!category) return fail(404, { message: 'Category not found' });
 

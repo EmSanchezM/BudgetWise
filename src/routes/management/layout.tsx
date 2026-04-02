@@ -1,5 +1,5 @@
 import { Slot, component$ } from "@builder.io/qwik";
-import { Form, Link, routeAction$, routeLoader$, type RequestHandler } from "@builder.io/qwik-city";
+import { Form, Link, routeAction$, routeLoader$, useLocation, type RequestHandler } from "@builder.io/qwik-city";
 import { PUBLIC_ROUTES } from "~/lib/constants";
 import { verifySession, SESSION_COOKIE_NAME, getAuthenticatedUser } from "~/lib/auth";
 
@@ -53,6 +53,7 @@ export const useLogout = routeAction$(async (_, { cookie, redirect }) => {
 export default component$(() => {
   const user = useUser();
   const logout = useLogout();
+  const location = useLocation();
 
   return (
     <>
@@ -172,7 +173,7 @@ export default component$(() => {
       </aside>
 
       <div class="p-4 sm:ml-64">
-        <div class="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 mt-14">
+        <div key={location.url.pathname} class="p-4 border-2 border-gray-200 rounded-lg dark:border-gray-700 mt-14">
           <Slot />
         </div>
       </div>

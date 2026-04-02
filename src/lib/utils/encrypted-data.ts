@@ -9,7 +9,7 @@ export const generateFromPassword = async(password: string) => {
 export const comparePasswordAndHash = async(password: string, encodedHash: string) => {
   try {
     return await argon2.verify(encodedHash, password);
-  } catch (e) {
+  } catch {
     return false;
   }
 }

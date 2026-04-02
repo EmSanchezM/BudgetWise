@@ -1,7 +1,7 @@
 import { $, component$, useSignal } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
 import { JSX } from "@builder.io/qwik/jsx-runtime";
-import { ArrowDownIcon, ArrowUpIcon, UserProfileIcon } from "./icons";
+import { ArrowDownIcon, ArrowUpIcon } from "./icons";
 
 interface DropdownProps {
   title: string;

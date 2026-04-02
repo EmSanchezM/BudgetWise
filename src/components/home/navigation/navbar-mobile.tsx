@@ -1,4 +1,4 @@
-import { $, QRL, component$ } from "@builder.io/qwik";
+import { type QRL, component$ } from "@builder.io/qwik";
 import { ButtonLink } from "~/components/shared";
 import { InfoIcon, MoneyIcon, WorldIcon } from "~/components/shared/icons";
 

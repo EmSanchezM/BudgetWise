@@ -2,13 +2,13 @@ import { component$ } from "@builder.io/qwik";
 import { Form, type DocumentHead, routeAction$, zod$ } from "@builder.io/qwik-city";
 import { FormGroup } from "~/components/shared/form";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 
 import orm from "~/lib/orm";
 import { CreateCategorySchemaValidation } from "~/lib/validation-schemes";
 
 export const useCreateCategory = routeAction$(async (data, { redirect, fail, sharedMap }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const category = await orm.category.create({
     data: {
@@ -35,7 +35,7 @@ export default component$(() => {
           <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create category</h2>
           <p class="mx-2 my-4 text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam at illum, est quisquam, corporis eius maiores omnis nesciunt repellendus minima assumenda officiis error dolorum ipsum dolores nihil ad placeat quam?
+            Create a new category to organize your transactions and budgets. Assign a name, description, and color.
           </p>
         </div>
         <Form action={action} class="space-y-6">

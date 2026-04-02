@@ -40,6 +40,9 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+# Scaffolding
+.create-qwik-*
+
 # Yarn
 .yarn/*
 !.yarn/releases

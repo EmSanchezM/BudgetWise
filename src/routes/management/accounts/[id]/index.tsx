@@ -1,13 +1,13 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import type { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
 
 export const useAccount = routeLoader$(async ({ params, fail, sharedMap }) => {
   const id = Number(params.id);
   if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const user = sharedMap.get("user") as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const account = await orm.account.findUnique({
     where: { id, userId: user.id },

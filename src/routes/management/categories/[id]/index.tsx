@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead, routeAction$, Form } from "@builder.io/qwik-city";
+import { getAuthenticatedUser } from "~/lib/auth";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import type { UserAuth } from "~/lib/models";
 
 import orm from "~/lib/orm";
 
@@ -9,7 +9,7 @@ export const useCategory = routeLoader$(async ({ params, fail, sharedMap }) => {
   const id = Number(params.id);
   if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const user = sharedMap.get("user") as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const category = await orm.category.findUnique({ where: { id, userId: user.id }, select: { id: true, name: true, description: true, color: true } });
 
@@ -22,7 +22,7 @@ export const useUpdateCategory = routeAction$(async (data, { params, redirect, f
   const id = Number(params.id);
   if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const user = sharedMap.get("user") as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const category = await orm.category.update({ data, where: { id, userId: user.id }, select: { id: true } });
 

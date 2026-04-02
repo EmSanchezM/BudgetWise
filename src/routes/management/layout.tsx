@@ -1,7 +1,7 @@
 import { Slot, component$ } from "@builder.io/qwik";
-import { Form, Link, routeAction$, type RequestHandler } from "@builder.io/qwik-city";
+import { Form, Link, routeAction$, routeLoader$, type RequestHandler } from "@builder.io/qwik-city";
 import { PUBLIC_ROUTES } from "~/lib/constants";
-import { verifySession, SESSION_COOKIE_NAME } from "~/lib/auth";
+import { verifySession, SESSION_COOKIE_NAME, getAuthenticatedUser } from "~/lib/auth";
 
 import orm from "~/lib/orm";
 
@@ -41,12 +41,17 @@ export const onRequest: RequestHandler = async ({
   return;
 };
 
+export const useUser = routeLoader$(async ({ sharedMap }) => {
+  return getAuthenticatedUser(sharedMap);
+});
+
 export const useLogout = routeAction$(async (_, { cookie, redirect }) => {
   cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
   throw redirect(301, PUBLIC_ROUTES.HOME);
 });
 
 export default component$(() => {
+  const user = useUser();
   const logout = useLogout();
 
   return (
@@ -70,16 +75,18 @@ export default component$(() => {
                 <div>
                   <button type="button" class="flex text-sm bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" aria-expanded="false" data-dropdown-toggle="dropdown-user">
                     <span class="sr-only">Open user menu</span>
-                    <img class="w-8 h-8 rounded-full" src="https://flowbite.com/docs/images/people/profile-picture-5.jpg" alt="user photo" />
+                    <span class="w-8 h-8 rounded-full bg-indigo-600 text-white flex items-center justify-center text-sm font-semibold">
+                      {user.value.firstName.charAt(0)}{user.value.lastName.charAt(0)}
+                    </span>
                   </button>
                 </div>
                 <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded shadow dark:bg-gray-700 dark:divide-gray-600" id="dropdown-user">
                   <div class="px-4 py-3" role="none">
                     <p class="text-sm text-gray-900 dark:text-white" role="none">
-                      Neil Sims
+                      {user.value.firstName} {user.value.lastName}
                     </p>
                     <p class="text-sm font-medium text-gray-900 truncate dark:text-gray-300" role="none">
-                      neil.sims@flowbite.com
+                      {user.value.email}
                     </p>
                   </div>
                   <ul class="py-1" role="none">

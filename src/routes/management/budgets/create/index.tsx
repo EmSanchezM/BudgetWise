@@ -4,13 +4,13 @@ import { DocumentHead, routeAction$, routeLoader$, zod$, Form } from "@builder.i
 import { FormGroup } from "~/components/shared/form";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
 import { currencies } from "~/lib/utils";
 import { CreateBudgetSchemaValidation } from "~/lib/validation-schemes";
 
 export const useCategories = routeLoader$(async ({ sharedMap }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const categories = await orm.category.findMany({
     where: { userId: user.id },
@@ -24,7 +24,7 @@ export const useCategories = routeLoader$(async ({ sharedMap }) => {
 });
 
 export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redirect }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const budget = await orm.budget.create({
     data: {
@@ -55,7 +55,7 @@ export default component$(() => {
           <img class="mx-auto mt-4 h-80 w-auto object-contain" src="/budget-wise.jpg" alt="Budgetwise" width={100} height={40} />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create budget</h2>
           <p class="mt-10 text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque sunt, temporibus sapiente rerum sed molestias eligendi tenetur nulla laboriosam accusamus magnam beatae, corrupti consectetur blanditiis, possimus harum reprehenderit quae. Ad?
+            Set up a budget to control your spending. Choose a category and define your limits.
           </p>
         </div>
         <Form action={action} class="space-y-6">

@@ -41,7 +41,7 @@ export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redi
 
   if (!budget.id) return fail(500, { message: 'Error create budget' });
 
-  throw redirect(301, MANAGEMENT_ROUTES.BUDGETS);
+  throw redirect(302, MANAGEMENT_ROUTES.BUDGETS);
 }, zod$(CreateBudgetSchemaValidation));
 
 export default component$(() => {

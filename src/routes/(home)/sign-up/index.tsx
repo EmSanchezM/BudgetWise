@@ -21,7 +21,7 @@ export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
 
   if (!user.id) return fail(500, { message: 'Error' });
 
-  throw redirect(301, PUBLIC_ROUTES.SIGN_IN);
+  throw redirect(302, PUBLIC_ROUTES.SIGN_IN);
 }, zod$(SignUpSchemaValidation));
 
 export default component$(() => {

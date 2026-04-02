@@ -67,7 +67,7 @@ export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail,
 
   if (!transaction.id) return fail(500, { message: 'Error create transaction' });
 
-  throw redirect(301, MANAGEMENT_ROUTES.TRANSACTIONS);
+  throw redirect(302, MANAGEMENT_ROUTES.TRANSACTIONS);
 }, zod$({
   ...CreateTransactionSchemaValidation,
   isExpense: z.string({ required_error: 'Transaction type is required' }),

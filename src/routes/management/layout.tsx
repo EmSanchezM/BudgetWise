@@ -13,13 +13,13 @@ export const onRequest: RequestHandler = async ({
 }) => {
   const sessionCookie = cookie.get(SESSION_COOKIE_NAME);
 
-  if (!sessionCookie) throw redirect(301, PUBLIC_ROUTES.HOME);
+  if (!sessionCookie) throw redirect(302, PUBLIC_ROUTES.HOME);
 
   const session = await verifySession(sessionCookie.value);
 
   if (!session) {
     cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
-    throw redirect(301, PUBLIC_ROUTES.HOME);
+    throw redirect(302, PUBLIC_ROUTES.HOME);
   }
 
   const user = await orm.user.findUnique({
@@ -34,7 +34,7 @@ export const onRequest: RequestHandler = async ({
 
   if (!user) {
     cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
-    throw redirect(301, PUBLIC_ROUTES.HOME);
+    throw redirect(302, PUBLIC_ROUTES.HOME);
   }
 
   sharedMap.set("user", user);
@@ -48,7 +48,7 @@ export const useUser = routeLoader$(async ({ sharedMap }) => {
 
 export const useLogout = routeAction$(async (_, { cookie, redirect }) => {
   cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
-  throw redirect(301, PUBLIC_ROUTES.HOME);
+  throw redirect(302, PUBLIC_ROUTES.HOME);
 });
 
 export default component$(() => {

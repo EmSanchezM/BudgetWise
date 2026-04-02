@@ -28,7 +28,7 @@ export const useUpdateCategory = routeAction$(async (data, { params, redirect, f
 
   if (!category.id) return fail(500, { message: 'Fail updated category' });
 
-  throw redirect(301, MANAGEMENT_ROUTES.CATEGORIES);
+  throw redirect(302, MANAGEMENT_ROUTES.CATEGORIES);
 })
 
 export default component$(() => {

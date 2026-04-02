@@ -22,7 +22,7 @@ export const useCreateCategory = routeAction$(async (data, { redirect, fail, sha
 
   if (!category.id) fail(500, { message: 'Error create category' });
 
-  redirect(301, MANAGEMENT_ROUTES.CATEGORIES);
+  redirect(302, MANAGEMENT_ROUTES.CATEGORIES);
 }, zod$(CreateCategorySchemaValidation));
 
 export default component$(() => {

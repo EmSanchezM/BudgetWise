@@ -1,12 +1,12 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 
 import orm from "~/lib/orm";
 import { GetFormatterForCurrency } from "~/lib/utils";
 
 export const useAccounts = routeLoader$(async ({ sharedMap }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const accounts = await orm.account.findMany({
     where: {

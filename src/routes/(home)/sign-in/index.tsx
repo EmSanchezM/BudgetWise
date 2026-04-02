@@ -27,7 +27,7 @@ export const useSignIn = routeAction$(async (data, { fail, redirect, cookie }) =
     maxAge: SESSION_MAX_AGE,
   });
 
-  throw redirect(301, MANAGEMENT_ROUTES.DAHSBOARD);
+  throw redirect(301, MANAGEMENT_ROUTES.DASHBOARD);
 }, zod$(SignInSchemaValidation));
 
 export default component$(() => {

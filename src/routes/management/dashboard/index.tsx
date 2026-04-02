@@ -1,9 +1,9 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import type { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 
 export const useDashboard = routeLoader$(async ({ sharedMap }) => {
-  const user = sharedMap.get("user") as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
   return { user };
 });
 

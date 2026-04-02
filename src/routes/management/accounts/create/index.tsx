@@ -4,13 +4,13 @@ import { DocumentHead, routeAction$, zod$, Form } from "@builder.io/qwik-city";
 import { FormGroup } from "~/components/shared/form";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
 import { currencies } from "~/lib/utils";
 import { CreateAccountSchemaValidation } from "~/lib/validation-schemes";
 
 export const useCreateAccount = routeAction$(async (data, { sharedMap, fail, redirect }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const account = await orm.account.create({
     data: {
@@ -39,7 +39,7 @@ export default component$(() => {
           <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create account</h2>
           <p class="mx-2 my-4 text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam at illum, est quisquam, corporis eius maiores omnis nesciunt repellendus minima assumenda officiis error dolorum ipsum dolores nihil ad placeat quam?
+            Create a new bank account to track your finances. Enter the account details below.
           </p>
         </div>
         <Form action={action} class="space-y-6">

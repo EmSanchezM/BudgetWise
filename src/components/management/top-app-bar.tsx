@@ -22,7 +22,7 @@ export const TopAppBar = component$<TopAppBarProps>(({ user }) => {
             {initials}
           </div>
           <span class="font-bold tracking-tighter text-2xl text-primary dark:text-surface">
-            Sovereign
+            BudgetWise
           </span>
         </div>
         <button class="text-primary dark:text-surface active:scale-95 duration-200">

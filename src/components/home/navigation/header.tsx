@@ -6,7 +6,7 @@ export const Header = component$(() => {
   return (
     <header class="fixed top-0 w-full z-50 bg-white/70 backdrop-blur-xl flex justify-between items-center px-6 py-4">
       <Link href="/" class="text-2xl font-black tracking-tighter text-primary">
-        Sovereign
+        BudgetWise
       </Link>
       <div class="flex items-center gap-4">
         <Link

@@ -8,7 +8,7 @@ export const About = component$(() => {
       {/* Hero Section */}
       <section class="px-6 mb-16">
         <div class="inline-block px-3 py-1 bg-secondary-container/30 text-on-secondary-container rounded-full text-[10px] font-bold tracking-widest uppercase mb-6">
-          The Financial Curator
+          Smart Finance
         </div>
         <h1 class="font-headline font-black text-5xl tracking-tighter text-primary leading-[0.95] mb-8">
           Want anything to be easy with BudgetWise

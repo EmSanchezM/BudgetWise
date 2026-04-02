@@ -27,8 +27,8 @@ export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redi
     data: {
       userId: user.id,
       name: data.name,
-      initDate: data.initDate,
-      finishDate: data.finishDate,
+      initDate: new Date(data.initDate),
+      finishDate: new Date(data.finishDate),
       amount: data.amount,
       currency: data.currency,
       categoryId: data.category,

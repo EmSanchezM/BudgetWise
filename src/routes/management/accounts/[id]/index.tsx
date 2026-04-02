@@ -1,27 +1,25 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import type { UserAuth } from "~/lib/models";
 import orm from "~/lib/orm";
 
-const useAccount = routeLoader$(async ({ params, fail }) => {
-  const accountID = +params.id;
+export const useAccount = routeLoader$(async ({ params, fail, sharedMap }) => {
+  const id = Number(params.id);
+  if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
+
+  const user = sharedMap.get("user") as UserAuth;
 
   const account = await orm.account.findUnique({
-    where: { id: accountID },
+    where: { id, userId: user.id },
     select: {
       name: true,
       numberAccount: true,
       type: true,
       balance: true,
-      user: {
-        select: {
-          firstName: true,
-          lastName: true,
-        }
-      }
     }
   })
 
-  if (!account) fail(404, { message: 'Account not found' });
+  if (!account) return fail(404, { message: 'Account not found' });
 
   return account;
 })

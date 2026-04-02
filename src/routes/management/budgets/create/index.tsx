@@ -9,8 +9,11 @@ import orm from "~/lib/orm";
 import { currencies } from "~/lib/utils";
 import { CreateBudgetSchemaValidation } from "~/lib/validation-schemes";
 
-export const useCategories = routeLoader$(async () => {
+export const useCategories = routeLoader$(async ({ sharedMap }) => {
+  const user = sharedMap.get('user') as UserAuth;
+
   const categories = await orm.category.findMany({
+    where: { userId: user.id },
     select: {
       id: true,
       name: true,
@@ -36,9 +39,9 @@ export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redi
     select: { id: true }
   });
 
-  if (!budget.id) fail(500, { message: 'Error create budget' });
+  if (!budget.id) return fail(500, { message: 'Error create budget' });
 
-  redirect(301, MANAGEMENT_ROUTES.BUDGETS);
+  throw redirect(301, MANAGEMENT_ROUTES.BUDGETS);
 }, zod$(CreateBudgetSchemaValidation));
 
 export default component$(() => {

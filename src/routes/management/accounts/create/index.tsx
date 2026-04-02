@@ -24,9 +24,9 @@ export const useCreateAccount = routeAction$(async (data, { sharedMap, fail, red
     select: { id: true }
   });
 
-  if (!account.id) fail(500, { message: 'Error create account' });
+  if (!account.id) return fail(500, { message: 'Error create account' });
 
-  redirect(301, MANAGEMENT_ROUTES.ACCOUNTS);
+  throw redirect(301, MANAGEMENT_ROUTES.ACCOUNTS);
 }, zod$(CreateAccountSchemaValidation));
 
 export default component$(() => {

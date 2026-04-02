@@ -6,20 +6,28 @@ import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { comparePasswordAndHash } from "~/lib/utils";
 import { SignInSchemaValidation } from "~/lib/validation-schemes";
 import { FormGroup } from "~/components/shared/form";
+import { createSession, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "~/lib/auth";
 
 export const useSignIn = routeAction$(async (data, { fail, redirect, cookie }) => {
 
   const user = await orm.user.findUnique({ where: { email: data.email } })
 
-  if (!user) fail(500, { message: 'Credentials not valid' });
+  if (!user) return fail(500, { message: 'Credentials not valid' });
 
-  const validPassword = await comparePasswordAndHash(data.password, user!.password);
+  const validPassword = await comparePasswordAndHash(data.password, user.password);
 
-  if (!validPassword) fail(500, { message: 'Credentials not valid' });
+  if (!validPassword) return fail(500, { message: 'Credentials not valid' });
 
-  cookie.set("jwt", user!.id, { secure: true, path: "/" });
+  const token = await createSession(user.id);
+  cookie.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
 
-  redirect(301, MANAGEMENT_ROUTES.DAHSBOARD);
+  throw redirect(301, MANAGEMENT_ROUTES.DAHSBOARD);
 }, zod$(SignInSchemaValidation));
 
 export default component$(() => {

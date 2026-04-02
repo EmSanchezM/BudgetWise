@@ -36,68 +36,74 @@ export const useChangePassword = routeAction$(async (data, { sharedMap, fail }) 
   return { success: true, message: "Password changed" };
 }, zod$(ChangePasswordSchemaValidation));
 
+const inputClass = "block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20";
+
 export default component$(() => {
   const profile = useProfile();
   const updateAction = useUpdateProfile();
   const passwordAction = useChangePassword();
 
   return (
-    <div class="max-w-2xl">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Profile</h1>
+    <div class="max-w-lg mx-auto space-y-8">
+      <h1 class="font-headline font-bold text-3xl tracking-tight text-primary">Profile</h1>
 
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-1">{profile.value.firstName} {profile.value.lastName}</h2>
-        <p class="text-gray-500 dark:text-gray-400">{profile.value.email}</p>
-        <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">
+      {/* User info */}
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <div class="flex items-center gap-4 mb-4">
+          <div class="w-16 h-16 rounded-full bg-primary-container flex items-center justify-center text-white text-xl font-bold">
+            {profile.value.firstName.charAt(0)}{profile.value.lastName.charAt(0)}
+          </div>
+          <div>
+            <h2 class="font-bold text-xl tracking-tight text-primary">{profile.value.firstName} {profile.value.lastName}</h2>
+            <p class="text-on-surface-variant text-sm">{profile.value.email}</p>
+          </div>
+        </div>
+        <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400">
           Member since {new Date(String(profile.value.createdAt)).toLocaleDateString()}
         </p>
       </div>
 
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Update Info</h2>
+      {/* Update info */}
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <h2 class="font-bold text-lg tracking-tight text-primary mb-6">Update Info</h2>
         {updateAction.value?.message && (
-          <div class={`mb-4 p-3 rounded text-sm ${updateAction.value?.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          <div class={["mb-6 p-4 rounded-xl text-sm font-medium", updateAction.value?.success ? "bg-on-tertiary-container/10 text-on-tertiary-container" : "bg-error-container/30 text-error"].join(" ")}>
             {updateAction.value.message}
           </div>
         )}
-        <Form action={updateAction} class="space-y-4">
+        <Form action={updateAction} class="space-y-5">
           <div>
-            <label for="firstName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
-            <input type="text" id="firstName" name="firstName" value={profile.value.firstName}
-              class="mt-1 block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm" />
+            <label for="firstName" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">First Name</label>
+            <input type="text" id="firstName" name="firstName" value={profile.value.firstName} class={inputClass} />
           </div>
           <div>
-            <label for="lastName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
-            <input type="text" id="lastName" name="lastName" value={profile.value.lastName}
-              class="mt-1 block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm" />
+            <label for="lastName" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Last Name</label>
+            <input type="text" id="lastName" name="lastName" value={profile.value.lastName} class={inputClass} />
           </div>
-          <button type="submit" disabled={updateAction.isRunning}
-            class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50">
+          <button type="submit" disabled={updateAction.isRunning} class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
             {updateAction.isRunning ? 'Saving...' : 'Save Changes'}
           </button>
         </Form>
       </div>
 
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Change Password</h2>
+      {/* Change password */}
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <h2 class="font-bold text-lg tracking-tight text-primary mb-6">Change Password</h2>
         {passwordAction.value?.message && (
-          <div class={`mb-4 p-3 rounded text-sm ${passwordAction.value?.success ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          <div class={["mb-6 p-4 rounded-xl text-sm font-medium", passwordAction.value?.success ? "bg-on-tertiary-container/10 text-on-tertiary-container" : "bg-error-container/30 text-error"].join(" ")}>
             {passwordAction.value.message}
           </div>
         )}
-        <Form action={passwordAction} class="space-y-4">
+        <Form action={passwordAction} class="space-y-5">
           <div>
-            <label for="currentPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Password</label>
-            <input type="password" id="currentPassword" name="currentPassword"
-              class="mt-1 block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm" />
+            <label for="currentPassword" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" class={inputClass} />
           </div>
           <div>
-            <label for="newPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">New Password</label>
-            <input type="password" id="newPassword" name="newPassword"
-              class="mt-1 block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm" />
+            <label for="newPassword" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" class={inputClass} />
           </div>
-          <button type="submit" disabled={passwordAction.isRunning}
-            class="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 disabled:opacity-50">
+          <button type="submit" disabled={passwordAction.isRunning} class="w-full bg-surface-container-highest text-on-surface py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
             {passwordAction.isRunning ? 'Changing...' : 'Change Password'}
           </button>
         </Form>
@@ -108,5 +114,5 @@ export default component$(() => {
 
 export const head: DocumentHead = {
   title: "BudgetWise | Profile",
-  meta: [{ name: "description", content: "Manage your profile settings" }],
+  meta: [{ name: "description", content: "Manage your profile" }],
 };

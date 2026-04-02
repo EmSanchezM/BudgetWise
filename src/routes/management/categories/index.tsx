@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/shared";
+import { EmptyState, Pagination } from "~/components/ui";
 import orm from "~/lib/orm";
 
 export const useCategories = routeLoader$(async ({ sharedMap, url }) => {
@@ -34,7 +34,7 @@ export const useCategories = routeLoader$(async ({ sharedMap, url }) => {
     orm.category.count({ where }),
   ]);
 
-  return { items: categories, page, totalPages: Math.ceil(total / pageSize) };
+  return { items: categories, page, totalPages: Math.ceil(total / pageSize), total };
 });
 
 export const useDeleteCategory = routeAction$(async (data, { fail, sharedMap }) => {
@@ -55,57 +55,94 @@ export default component$(() => {
   const deleteCategory = useDeleteCategory();
 
   return (
-    <section>
-      <header class="mb-4">
-        <h1 class="font-bold capitalize text-2xl mb-4">Categories</h1>
-        <Link href="create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create category</Link>
-      </header>
-      <div class="flex gap-2 mb-4 text-sm">
-        <span class="text-gray-500">Sort by:</span>
-        <Link href="?sort=name&order=asc" class="text-indigo-600 hover:underline">Name</Link>
-        <Link href="?sort=createdAt&order=desc" class="text-indigo-600 hover:underline">Newest</Link>
+    <div class="space-y-8">
+      {/* Header */}
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div class="max-w-2xl">
+          <h1 class="text-primary font-headline font-bold text-[2.5rem] lg:text-[3.5rem] leading-[1.1] tracking-tight mb-2">
+            Categories
+          </h1>
+          <p class="text-on-surface-variant text-sm lg:text-base leading-relaxed max-w-lg">
+            Organize your financial narrative with a taxonomy that reflects your life.
+          </p>
+        </div>
+        <Link
+          href="create"
+          class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 lg:px-8 lg:py-4 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shrink-0"
+        >
+          <span class="material-symbols-outlined">add</span>
+          Create Category
+        </Link>
       </div>
-      <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {categories.value.items.length === 0 ? (
-          <EmptyState title="No categories yet" description="Create your first category to get started." />
-        ) : (
-          categories.value.items.map(category => {
-            return (
-              <article class="p-6 bg-white border border-gray-200 rounded-lg shadow">
-                <Link href={`${category.id}`}>
-                  <span class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{category.name}</span>
-                </Link>
-                <p class="mb-3 font-normal text-gray-700">
-                  {category.description}
-                </p>
-                <Link href={`${category.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Detail
-                  <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                  </svg>
-                </Link>
-                <Form action={deleteCategory} class="inline-flex">
-                  <input type="hidden" name="id" value={category.id} />
-                  <button type="submit" class="inline-flex items-center px-3 py-2 mx-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                    Delete
-                  </button>
-                </Form>
-              </article>
-            )
-          })
-        )}
-      </main>
+
+      {/* Sort chips */}
+      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        <span class="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest self-center mr-1">Sort:</span>
+        <Link href="?sort=name&order=asc" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap">Name</Link>
+        <Link href="?sort=createdAt&order=desc" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap">Newest</Link>
+      </div>
+
+      {/* Category Cards */}
+      {categories.value.items.length === 0 ? (
+        <EmptyState title="No categories yet" description="Create your first category to get started." icon="grid_view" />
+      ) : (
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {categories.value.items.map((category) => (
+            <div
+              key={category.id}
+              class="bg-surface-container-lowest rounded-xl p-6 editorial-shadow group"
+            >
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-14 h-14 rounded-full flex items-center justify-center shrink-0"
+                  style={{ backgroundColor: (category.color || '#0c1427') + '1a' }}
+                >
+                  <span
+                    class="material-symbols-outlined"
+                    style={{ color: category.color || '#0c1427' }}
+                  >
+                    grid_view
+                  </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between mb-1">
+                    <Link href={`${category.id}`}>
+                      <h3 class="font-bold text-lg tracking-tight text-primary hover:underline">{category.name}</h3>
+                    </Link>
+                    <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <Link href={`${category.id}`} class="p-1 text-outline hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined text-sm">edit</span>
+                      </Link>
+                      <Form action={deleteCategory} class="inline">
+                        <input type="hidden" name="id" value={category.id} />
+                        <button type="submit" class="p-1 text-outline hover:text-error transition-colors">
+                          <span class="material-symbols-outlined text-sm">delete</span>
+                        </button>
+                      </Form>
+                    </div>
+                  </div>
+                  {category.description && (
+                    <p class="text-on-surface-variant text-sm line-clamp-2">{category.description}</p>
+                  )}
+                  {category.color && (
+                    <div class="flex items-center gap-2 mt-2">
+                      <div class="w-3 h-3 rounded-full" style={{ backgroundColor: category.color }}></div>
+                      <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">{category.color}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <Pagination currentPage={categories.value.page} totalPages={categories.value.totalPages} baseUrl="/management/categories" />
-    </section>
+    </div>
   );
 });
 
 export const head: DocumentHead = {
   title: "BudgetWise | Categories",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  meta: [{ name: "description", content: "Manage your financial categories" }],
 };

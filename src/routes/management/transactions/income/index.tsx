@@ -4,17 +4,18 @@ import { DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.i
 import { FormGroup } from "~/components/shared/form";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
 import { currencies } from "~/lib/utils";
 import { CreateTransactionSchemaValidation } from "~/lib/validation-schemes";
 
 export const useAccounts = routeLoader$(async ({ sharedMap }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const accounts = await orm.account.findMany({
     where: {
-      userId: user.id
+      userId: user.id,
+      deletedAt: null
     },
     select: {
       id: true,
@@ -27,7 +28,7 @@ export const useAccounts = routeLoader$(async ({ sharedMap }) => {
 })
 
 export const useCreateIncomeTransaction = routeAction$(async (data, { sharedMap, fail, redirect }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const payload = {
     userId: +user.id,
@@ -45,9 +46,9 @@ export const useCreateIncomeTransaction = routeAction$(async (data, { sharedMap,
     select: { id: true }
   });
 
-  if (!transaction.id) fail(500, { message: 'Error create transaction' });
+  if (!transaction.id) return fail(500, { message: 'Error create transaction' });
 
-  redirect(301, MANAGEMENT_ROUTES.TRANSACTIONS);
+  throw redirect(301, MANAGEMENT_ROUTES.TRANSACTIONS);
 }, zod$(CreateTransactionSchemaValidation));
 
 export default component$(() => {
@@ -61,7 +62,7 @@ export default component$(() => {
           <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create income</h2>
           <p class="mx-2 my-4 text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam at illum, est quisquam, corporis eius maiores omnis nesciunt repellendus minima assumenda officiis error dolorum ipsum dolores nihil ad placeat quam?
+            Record a new income transaction. Select an account and enter the details below.
           </p>
         </div>
         <Form action={action} class="space-y-6">
@@ -116,7 +117,7 @@ export default component$(() => {
           />
 
           <div>
-            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create</button>
+            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
           </div>
         </Form>
       </div>

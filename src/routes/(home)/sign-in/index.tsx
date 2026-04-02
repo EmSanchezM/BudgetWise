@@ -6,20 +6,28 @@ import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { comparePasswordAndHash } from "~/lib/utils";
 import { SignInSchemaValidation } from "~/lib/validation-schemes";
 import { FormGroup } from "~/components/shared/form";
+import { createSession, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "~/lib/auth";
 
 export const useSignIn = routeAction$(async (data, { fail, redirect, cookie }) => {
 
   const user = await orm.user.findUnique({ where: { email: data.email } })
 
-  if (!user) fail(500, { message: 'Credentials not valid' });
+  if (!user) return fail(500, { message: 'Credentials not valid' });
 
-  const validPassword = await comparePasswordAndHash(data.password, user!.password);
+  const validPassword = await comparePasswordAndHash(data.password, user.password);
 
-  if (!validPassword) fail(500, { message: 'Credentials not valid' });
+  if (!validPassword) return fail(500, { message: 'Credentials not valid' });
 
-  cookie.set("jwt", user!.id, { secure: true, path: "/" });
+  const token = await createSession(user.id);
+  cookie.set(SESSION_COOKIE_NAME, token, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    path: "/",
+    maxAge: SESSION_MAX_AGE,
+  });
 
-  redirect(301, MANAGEMENT_ROUTES.DAHSBOARD);
+  throw redirect(301, MANAGEMENT_ROUTES.DASHBOARD);
 }, zod$(SignInSchemaValidation));
 
 export default component$(() => {
@@ -49,7 +57,7 @@ export default component$(() => {
             errors={action.value?.fieldErrors?.password}
           />
           <div>
-            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Sign in'}</button>
           </div>
         </Form>
       </div>

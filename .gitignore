@@ -8,6 +8,10 @@
 node_modules
 *.local
 
+# Environment
+.env
+.env.local
+
 # Cache
 .cache
 .mf
@@ -35,6 +39,9 @@ lerna-debug.log*
 *.njsproj
 *.sln
 *.sw?
+
+# Scaffolding
+.create-qwik-*
 
 # Yarn
 .yarn/*

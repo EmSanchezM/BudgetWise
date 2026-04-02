@@ -1,16 +1,18 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
+import { EmptyState } from "~/components/shared";
 
 import orm from "~/lib/orm";
-import { GetFormatterForCurrency } from "~/lib/utils";
+import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
 
 export const useTransactions = routeLoader$(async ({ sharedMap }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const transactions = await orm.transaction.findMany({
     where: {
-      userId: +user.id
+      userId: +user.id,
+      deletedAt: null
     },
     select: {
       id: true,
@@ -48,7 +50,9 @@ export default component$(() => {
         <Link href="expense" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create expense</Link>
       </header>
       <main class="mb-4">
-        {
+        {transactions.value.length === 0 ? (
+          <EmptyState title="No transactions yet" description="Create your first transaction to get started." />
+        ) : (
           transactions.value.map(transaction => {
             return (
               <article class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
@@ -58,7 +62,7 @@ export default component$(() => {
                 <span class="mb-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ms-3">{transaction.isExpense ? 'Expense' : 'Income'}</span>
                 <p class="mb-3 font-normal text-gray-700">
                   {transaction.description}
-                  {transaction.account.name} - {GetFormatterForCurrency(transaction.currency).format(transaction.amount)}
+                  {transaction.account.name} - {GetFormatterForCurrency(transaction.currency).format(fromCents(transaction.amount))}
                 </p>
                 <Link href={`${transaction.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                   Detail
@@ -72,14 +76,14 @@ export default component$(() => {
               </article>
             )
           })
-        }
+        )}
       </main>
     </section>
   );
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise | Accounts",
+  title: "BudgetWise | Transactions",
   meta: [
     {
       name: "description",

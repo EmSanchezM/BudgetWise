@@ -1,29 +1,34 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead, routeAction$, Form } from "@builder.io/qwik-city";
+import { getAuthenticatedUser } from "~/lib/auth";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 
 import orm from "~/lib/orm";
 
-export const useCategory = routeLoader$(async ({ params, fail }) => {
-  const { id } = params;
+export const useCategory = routeLoader$(async ({ params, fail, sharedMap }) => {
+  const id = Number(params.id);
+  if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const category = await orm.category.findUnique({ where: { id: +id }, select: { id: true, name: true, description: true, color: true } });
+  const user = getAuthenticatedUser(sharedMap);
+
+  const category = await orm.category.findUnique({ where: { id, userId: user.id, deletedAt: null }, select: { id: true, name: true, description: true, color: true } });
 
   if (!category) return fail(404, { message: 'Category not found' });
 
   return category;
 });
 
-export const useUpdateCategory = routeAction$(async (data, { params, redirect, fail }) => {
-  const { id } = params;
+export const useUpdateCategory = routeAction$(async (data, { params, redirect, fail, sharedMap }) => {
+  const id = Number(params.id);
+  if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  if (!id) return fail(404, { message: 'Category not found' });
+  const user = getAuthenticatedUser(sharedMap);
 
-  const category = await orm.category.update({ data, where: { id: +id }, select: { id: true } });
+  const category = await orm.category.update({ data, where: { id, userId: user.id }, select: { id: true } });
 
   if (!category.id) return fail(500, { message: 'Fail updated category' });
 
-  redirect(301, MANAGEMENT_ROUTES.CATEGORIES);
+  throw redirect(301, MANAGEMENT_ROUTES.CATEGORIES);
 })
 
 export default component$(() => {

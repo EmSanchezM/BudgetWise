@@ -4,13 +4,16 @@ import { DocumentHead, routeAction$, routeLoader$, zod$, Form } from "@builder.i
 import { FormGroup } from "~/components/shared/form";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
-import { UserAuth } from "~/lib/models";
+import { getAuthenticatedUser } from "~/lib/auth";
 import orm from "~/lib/orm";
 import { currencies } from "~/lib/utils";
 import { CreateBudgetSchemaValidation } from "~/lib/validation-schemes";
 
-export const useCategories = routeLoader$(async () => {
+export const useCategories = routeLoader$(async ({ sharedMap }) => {
+  const user = getAuthenticatedUser(sharedMap);
+
   const categories = await orm.category.findMany({
+    where: { userId: user.id, deletedAt: null },
     select: {
       id: true,
       name: true,
@@ -21,7 +24,7 @@ export const useCategories = routeLoader$(async () => {
 });
 
 export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redirect }) => {
-  const user = sharedMap.get('user') as UserAuth;
+  const user = getAuthenticatedUser(sharedMap);
 
   const budget = await orm.budget.create({
     data: {
@@ -36,9 +39,9 @@ export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redi
     select: { id: true }
   });
 
-  if (!budget.id) fail(500, { message: 'Error create budget' });
+  if (!budget.id) return fail(500, { message: 'Error create budget' });
 
-  redirect(301, MANAGEMENT_ROUTES.BUDGETS);
+  throw redirect(301, MANAGEMENT_ROUTES.BUDGETS);
 }, zod$(CreateBudgetSchemaValidation));
 
 export default component$(() => {
@@ -52,7 +55,7 @@ export default component$(() => {
           <img class="mx-auto mt-4 h-80 w-auto object-contain" src="/budget-wise.jpg" alt="Budgetwise" width={100} height={40} />
           <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create budget</h2>
           <p class="mt-10 text-center">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque sunt, temporibus sapiente rerum sed molestias eligendi tenetur nulla laboriosam accusamus magnam beatae, corrupti consectetur blanditiis, possimus harum reprehenderit quae. Ad?
+            Set up a budget to control your spending. Choose a category and define your limits.
           </p>
         </div>
         <Form action={action} class="space-y-6">
@@ -104,7 +107,7 @@ export default component$(() => {
           />
 
           <div>
-            <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Create</button>
+            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
           </div>
         </Form>
       </div>

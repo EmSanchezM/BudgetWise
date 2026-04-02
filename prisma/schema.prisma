@@ -1,74 +1,96 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  firstName  String
-  lastName String
-  password String
-  accounts Account[]
-  budgets Budget[]
+  id           Int           @id @default(autoincrement())
+  email        String        @unique
+  firstName    String
+  lastName     String
+  password     String
+  accounts     Account[]
+  budgets      Budget[]
   transactions Transaction[]
-  categories Category[]
+  categories   Category[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   @@index([email])
 }
 
 model Account {
-  id    Int     @id @default(autoincrement())
-  name String
-  numberAccount String @unique
-  type String
-  currency String
-  balance Float
-  transactions Transaction[]
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  id            Int           @id @default(autoincrement())
+  name          String
+  numberAccount String        @unique
+  type          String
+  currency      String
+  balance       Int
+  transactions  Transaction[]
+  userId        Int
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
   @@index([numberAccount])
+  @@index([userId])
 }
 
 model Transaction {
-  id    Int     @id @default(autoincrement())
-  name String
+  id              Int       @id @default(autoincrement())
+  name            String
   transactionDate DateTime
-  amount Float
-  currency String
-  description String
-  isExpense Boolean
-  accountId Int
-  account Account @relation(fields: [accountId], references: [id])
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  amount          Int
+  currency        String
+  description     String
+  isExpense       Boolean
+  accountId       Int
+  account         Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  userId          Int
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categoryId      Int?
+  category        Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  deletedAt       DateTime?
+  @@index([userId])
+  @@index([accountId])
+  @@index([transactionDate])
+  @@index([categoryId])
 }
 
 model Budget {
-  id    Int     @id @default(autoincrement())
-  name String
-  initDate DateTime
+  id         Int       @id @default(autoincrement())
+  name       String
+  initDate   DateTime
   finishDate DateTime
-  amount Float
-  currency String
+  amount     Int
+  currency   String
   categoryId Int
-  category Category @relation(fields: [categoryId], references: [id])
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  deletedAt  DateTime?
+  @@index([userId])
+  @@index([categoryId])
 }
 
 model Category {
-  id    Int     @id @default(autoincrement())
-  name String
-  description String
-  color String
-  budgets Budget[]
-  userId Int
-  user User @relation(fields: [userId], references: [id])
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String
+  color        String
+  budgets      Budget[]
+  transactions Transaction[]
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  @@index([userId])
 }

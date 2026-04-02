@@ -1,53 +1,46 @@
-import { component$, useStylesScoped$ } from "@builder.io/qwik";
+import { component$ } from "@builder.io/qwik";
+
+const features = [
+  { icon: "touch_app", title: "Intuitive Interface", description: "Designed for clarity and speed. Every interaction feels intentional." },
+  { icon: "trending_up", title: "Income & Expense Tracking", description: "Monitor every flow of capital with editorial-grade precision." },
+  { icon: "category", title: "Custom Categories", description: "Organize your finances with a taxonomy that reflects your life." },
+  { icon: "language", title: "Worldwide Currencies", description: "Operate across borders with multi-currency intelligence." },
+  { icon: "support_agent", title: "24/7 Support", description: "Our team is always available to assist your financial journey." },
+];
 
 export const Feature = component$(() => {
-  useStylesScoped$(`
-    li.custom-list:before {
-      content: "\x2022";
-      text-indent: -9999999px;
-      width: .4em;
-      height: 1em;
-      background-repeat: no-repeat;
-      background-size: .4em .7em;
-      background-position: 0 .3em;
-      font-size: 300%;
-      top: -.35em;
-      position: absolute;
-      display: block
-    }
-
-    li.circle-check:before {
-      background-image: url(/checklist.svg);
-      left: -.7em;
-      top: -.4em
-    }
-  `);
-
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto" id="feature">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-cols-1 sm:grid-cols-2 gap-8 py-8 my-12">
-        <div class="flex w-full justify-end">
-          <div class="h-full w-full p-4">
-            <img src="/budget-wise.jpg" width={612} height={383} alt="BudgetWise Ilustration" />
+    <section class="px-6 max-w-3xl mx-auto" id="feature">
+      {/* Header */}
+      <div class="mb-12">
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">
+          Capabilities
+        </h2>
+        <h3 class="font-headline font-black text-4xl tracking-tighter text-primary leading-[0.95] mb-4">
+          Features built for the modern curator
+        </h3>
+        <p class="text-secondary text-lg leading-relaxed max-w-lg">
+          Every feature is designed with intention, providing you the tools to curate your financial narrative.
+        </p>
+      </div>
+
+      {/* Feature list */}
+      <div class="space-y-4">
+        {features.map((feature) => (
+          <div
+            key={feature.title}
+            class="flex items-center gap-5 p-6 bg-surface-container-lowest rounded-2xl editorial-shadow"
+          >
+            <div class="w-12 h-12 shrink-0 rounded-full bg-surface-container-high flex items-center justify-center">
+              <span class="material-symbols-outlined text-primary">{feature.icon}</span>
+            </div>
+            <div>
+              <div class="text-primary font-bold text-sm mb-0.5">{feature.title}</div>
+              <div class="text-on-surface-variant text-xs leading-relaxed">{feature.description}</div>
+            </div>
           </div>
-        </div>
-        <div class="flex flex-col items-end justify-center ml-auto w-full lg:w-9/12">
-          <h3 class="text-3xl lg:text-4xl font-medium leading-relaxed text-black">
-            We Provide Many Features You Can Use
-          </h3>
-          <p class="my-2 text-black-500">
-            You can explore the features that we provide with fun and have their
-            own functions each feature.
-          </p>
-          <ul class="text-black self-start list-inside ml-8">
-            <li class="relative circle-check custom-list">Easy to use interface.</li>
-            <li class="relative circle-check custom-list">Track your income & expenses.</li>
-            <li class="relative circle-check custom-list">Customize your own categories.</li>
-            <li class="relative circle-check custom-list">Worldwide currencies.</li>
-            <li class="relative circle-check custom-list">We're there for you 24/7.</li>
-          </ul>
-        </div>
+        ))}
       </div>
     </section>
-  )
-})
+  );
+});

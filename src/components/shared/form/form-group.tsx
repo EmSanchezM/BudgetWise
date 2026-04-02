@@ -6,13 +6,13 @@ interface FormGroupProps {
   id: string;
   name: string;
   type: 'text' | 'number' | 'select' | 'date' | 'password' | 'email';
-  errors?: string[] | undefined;
+  errors?: string | string[] | undefined;
   items?: { id: number | string; name: string; }[]
 }
 
 export const FormGroup = component$<FormGroupProps>(({ labelName, id, name, type, items, errors }) => {
   const hasError = errors ? true : false;
-  const errorMessage = hasError && errors ? errors.join(', ') : '';
+  const errorMessage = hasError && errors ? (Array.isArray(errors) ? errors.join(', ') : errors) : '';
 
   return (
     <div>

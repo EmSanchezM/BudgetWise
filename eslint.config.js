@@ -1,0 +1,87 @@
+import js from "@eslint/js";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsparser from "@typescript-eslint/parser";
+import { qwikEslint9Plugin } from "eslint-plugin-qwik";
+
+export default [
+  js.configs.recommended,
+  ...qwikEslint9Plugin.configs.recommended,
+  {
+    files: ["src/**/*.ts", "src/**/*.tsx"],
+    languageOptions: {
+      parser: tsparser,
+      parserOptions: {
+        project: ["./tsconfig.json"],
+        ecmaVersion: 2021,
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+      globals: {
+        document: "readonly",
+        window: "readonly",
+        navigator: "readonly",
+        console: "readonly",
+        setTimeout: "readonly",
+        clearTimeout: "readonly",
+        setInterval: "readonly",
+        clearInterval: "readonly",
+        fetch: "readonly",
+        URL: "readonly",
+        URLSearchParams: "readonly",
+        Request: "readonly",
+        Response: "readonly",
+        Headers: "readonly",
+        FormData: "readonly",
+        process: "readonly",
+        __dirname: "readonly",
+      },
+    },
+    plugins: {
+      "@typescript-eslint": tseslint,
+    },
+    rules: {
+      "@typescript-eslint/no-explicit-any": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off",
+      "@typescript-eslint/no-inferrable-types": "off",
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "@typescript-eslint/no-empty-interface": "off",
+      "@typescript-eslint/no-namespace": "off",
+      "@typescript-eslint/no-empty-function": "off",
+      "@typescript-eslint/no-this-alias": "off",
+      "@typescript-eslint/ban-types": "off",
+      "@typescript-eslint/ban-ts-comment": "off",
+      "no-unused-vars": "off",
+      "no-undef": "off",
+      "prefer-spread": "off",
+      "no-case-declarations": "off",
+      "no-console": "off",
+      "@typescript-eslint/no-unused-vars": ["error"],
+      "@typescript-eslint/consistent-type-imports": "warn",
+      "@typescript-eslint/no-unnecessary-condition": "warn",
+    },
+  },
+  {
+    ignores: [
+      "**/*.log",
+      ".vscode/**",
+      "dist/**",
+      "dist-dev/**",
+      "lib/**",
+      "lib-types/**",
+      "node_modules/**",
+      "temp/**",
+      "tsc-out/**",
+      "build/**",
+      ".cache/**",
+      ".rollup.cache/**",
+      "server/**",
+      ".netlify/**",
+      "*.spec.tsx",
+      "*.spec.ts",
+      "vite.config.ts",
+      "rollup.config.js",
+    ],
+  },
+];

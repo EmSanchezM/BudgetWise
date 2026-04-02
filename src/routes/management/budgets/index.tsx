@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
+import { EmptyState } from "~/components/shared";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -36,7 +37,9 @@ export default component$(() => {
         <Link href="create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create budget</Link>
       </header>
       <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {
+        {budgets.value.length === 0 ? (
+          <EmptyState title="No budgets yet" description="Create your first budget to get started." />
+        ) : (
           budgets.value.map(budget => {
             return (
               <article class="p-6 bg-white border border-gray-200 rounded-lg shadow">
@@ -60,7 +63,7 @@ export default component$(() => {
               </article>
             )
           })
-        }
+        )}
       </main>
     </section>
   );

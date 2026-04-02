@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Link, useLocation, type ActionStore } from "@builder.io/qwik-city";
+import { useLocation, type ActionStore } from "@builder.io/qwik-city";
 import { Form } from "@builder.io/qwik-city";
 
 export type NavIcon =
@@ -123,12 +123,12 @@ export const NavItem = component$<NavItemProps>(
 
     return (
       <li>
-        <Link href={href} class={`${baseClasses}${activeClasses}`}>
+        <a href={href} class={`${baseClasses}${activeClasses}`}>
           <Icon />
           <span class={icon === "dashboard" ? "ms-3" : "flex-1 ms-3 whitespace-nowrap"}>
             {label}
           </span>
-        </Link>
+        </a>
       </li>
     );
   },

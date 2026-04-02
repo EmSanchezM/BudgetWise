@@ -13,7 +13,8 @@ export const useAccounts = routeLoader$(async ({ sharedMap }) => {
 
   const accounts = await orm.account.findMany({
     where: {
-      userId: user.id
+      userId: user.id,
+      deletedAt: null
     },
     select: {
       id: true,

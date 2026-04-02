@@ -8,7 +8,8 @@ export const useCategories = routeLoader$(async ({ sharedMap }) => {
 
   const categories = await orm.category.findMany({
     where: {
-      userId: user.id
+      userId: user.id,
+      deletedAt: null
     },
     select: {
       id: true,

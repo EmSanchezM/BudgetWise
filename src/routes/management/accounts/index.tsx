@@ -3,14 +3,15 @@ import { Link, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 
 import orm from "~/lib/orm";
-import { GetFormatterForCurrency } from "~/lib/utils";
+import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
 
 export const useAccounts = routeLoader$(async ({ sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
 
   const accounts = await orm.account.findMany({
     where: {
-      userId: +user.id
+      userId: +user.id,
+      deletedAt: null
     },
     select: {
       id: true,
@@ -50,7 +51,7 @@ export default component$(() => {
                 <p class="mb-3 font-normal text-gray-700">
                   <span>{account.user.firstName} {account.user.lastName}</span>
                   <br />
-                  {GetFormatterForCurrency('USD').format(account.balance)}
+                  {GetFormatterForCurrency('USD').format(fromCents(account.balance))}
                   <span class="mb-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ms-3">{account.type}</span>
                 </p>
                 <Link href={`${account.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">

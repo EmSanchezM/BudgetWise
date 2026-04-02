@@ -1,6 +1,7 @@
 import { Slot, component$ } from "@builder.io/qwik";
-import { Link, type RequestHandler } from "@builder.io/qwik-city";
+import { Form, Link, routeAction$, type RequestHandler } from "@builder.io/qwik-city";
 import { PUBLIC_ROUTES } from "~/lib/constants";
+import { verifySession, SESSION_COOKIE_NAME } from "~/lib/auth";
 
 import orm from "~/lib/orm";
 
@@ -9,12 +10,19 @@ export const onRequest: RequestHandler = async ({
   redirect,
   sharedMap,
 }) => {
-  const jwt = cookie.get("jwt");
+  const sessionCookie = cookie.get(SESSION_COOKIE_NAME);
 
-  if (!jwt || jwt === null) throw redirect(301, PUBLIC_ROUTES.HOME);
+  if (!sessionCookie) throw redirect(301, PUBLIC_ROUTES.HOME);
+
+  const session = await verifySession(sessionCookie.value);
+
+  if (!session) {
+    cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
+    throw redirect(301, PUBLIC_ROUTES.HOME);
+  }
 
   const user = await orm.user.findUnique({
-    where: { id: +jwt.value },
+    where: { id: session.userId },
     select: {
       id: true,
       firstName: true,
@@ -23,12 +31,24 @@ export const onRequest: RequestHandler = async ({
     }
   });
 
+  if (!user) {
+    cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
+    throw redirect(301, PUBLIC_ROUTES.HOME);
+  }
+
   sharedMap.set("user", user);
 
   return;
 };
 
+export const useLogout = routeAction$(async (_, { cookie, redirect }) => {
+  cookie.delete(SESSION_COOKIE_NAME, { path: "/" });
+  throw redirect(301, PUBLIC_ROUTES.HOME);
+});
+
 export default component$(() => {
+  const logout = useLogout();
+
   return (
     <>
       <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
@@ -129,6 +149,16 @@ export default component$(() => {
                 </svg>
                 <span class="flex-1 ms-3 whitespace-nowrap">Transactions</span>
               </Link>
+            </li>
+            <li>
+              <Form action={logout}>
+                <button type="submit" class="flex w-full items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                  <svg class="shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 16">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 8h11m0 0L8 4m4 4-4 4m4-11h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3" />
+                  </svg>
+                  <span class="flex-1 ms-3 whitespace-nowrap">Logout</span>
+                </button>
+              </Form>
             </li>
           </ul>
         </div>

@@ -8,6 +8,10 @@
 node_modules
 *.local
 
+# Environment
+.env
+.env.local
+
 # Cache
 .cache
 .mf

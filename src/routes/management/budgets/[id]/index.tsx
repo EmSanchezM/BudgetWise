@@ -1,12 +1,16 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import type { UserAuth } from "~/lib/models";
 import orm from "~/lib/orm";
 
-const useBudget = routeLoader$(async ({ params, fail }) => {
-  const budgetID = +params.id
+export const useBudget = routeLoader$(async ({ params, fail, sharedMap }) => {
+  const id = Number(params.id);
+  if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const budget = orm.budget.findUnique({
-    where: { id: budgetID },
+  const user = sharedMap.get("user") as UserAuth;
+
+  const budget = await orm.budget.findUnique({
+    where: { id, userId: user.id },
     select: {
       name: true,
       initDate: true,
@@ -22,7 +26,7 @@ const useBudget = routeLoader$(async ({ params, fail }) => {
     }
   });
 
-  if (!budget) fail(404, { message: 'Budget not found' });
+  if (!budget) return fail(404, { message: 'Budget not found' });
 
   return budget;
 })

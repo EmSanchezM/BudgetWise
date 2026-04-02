@@ -19,9 +19,9 @@ export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
 
   const user = await orm.user.create({ data: payload });
 
-  if (!user.id) fail(500, { message: 'Error' });
+  if (!user.id) return fail(500, { message: 'Error' });
 
-  redirect(301, PUBLIC_ROUTES.SIGN_IN);
+  throw redirect(301, PUBLIC_ROUTES.SIGN_IN);
 }, zod$(SignUpSchemaValidation));
 
 export default component$(() => {

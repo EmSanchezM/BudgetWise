@@ -1,12 +1,16 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import type { UserAuth } from "~/lib/models";
 import orm from "~/lib/orm";
 
-const useTransaction = routeLoader$(async ({ params }) => {
-  const transactionID = +params.id
+export const useTransaction = routeLoader$(async ({ params, fail, sharedMap }) => {
+  const id = Number(params.id);
+  if (isNaN(id)) return fail(400, { message: 'Invalid ID' });
 
-  const transaction = orm.transaction.findUnique({
-    where: { id: transactionID },
+  const user = sharedMap.get("user") as UserAuth;
+
+  const transaction = await orm.transaction.findUnique({
+    where: { id, userId: user.id },
     select: {
       name: true,
       transactionDate: true,
@@ -23,6 +27,8 @@ const useTransaction = routeLoader$(async ({ params }) => {
       },
     }
   });
+
+  if (!transaction) return fail(404, { message: 'Transaction not found' });
 
   return transaction;
 });

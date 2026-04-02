@@ -58,10 +58,26 @@ export const useDeleteTransaction = routeAction$(async (data, { fail, sharedMap 
   const id = Number(data.id);
   if (isNaN(id)) return fail(400, { message: "Invalid ID" });
 
-  await orm.transaction.update({
-    where: { id, userId: +user.id },
-    data: { deletedAt: new Date() },
+  const transaction = await orm.transaction.findUnique({
+    where: { id, userId: user.id, deletedAt: null },
+    select: { amount: true, isExpense: true, accountId: true },
   });
+
+  if (!transaction) return fail(404, { message: "Transaction not found" });
+
+  // Reverse the balance: if it was expense (-amount), add it back; if income (+amount), subtract it
+  const balanceAdjustment = transaction.isExpense ? transaction.amount : -transaction.amount;
+
+  await orm.$transaction([
+    orm.transaction.update({
+      where: { id, userId: user.id },
+      data: { deletedAt: new Date() },
+    }),
+    orm.account.update({
+      where: { id: transaction.accountId },
+      data: { balance: { increment: balanceAdjustment } },
+    }),
+  ]);
 
   return { success: true };
 });

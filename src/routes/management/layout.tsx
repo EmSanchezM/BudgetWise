@@ -38,8 +38,6 @@ export const onRequest: RequestHandler = async ({
   }
 
   sharedMap.set("user", user);
-
-  return;
 };
 
 export const useUser = routeLoader$(async ({ sharedMap }) => {

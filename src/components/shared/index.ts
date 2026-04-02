@@ -4,3 +4,4 @@ export * from "./dropdown";
 export * from "./button-link";
 export { EmptyState } from "./empty-state";
 export { ErrorMessage } from "./error-message";
+export { Pagination } from "./pagination";

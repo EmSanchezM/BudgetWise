@@ -45,6 +45,16 @@ export const Sidebar = component$<SidebarProps>(({ logoutAction, isOpen }) => {
             icon="transactions"
           />
           <NavItem
+            href="/management/profile"
+            label="Profile"
+            icon="profile"
+          />
+          <NavItem
+            href="/management/settings"
+            label="Settings"
+            icon="settings"
+          />
+          <NavItem
             href="#"
             label="Logout"
             icon="logout"

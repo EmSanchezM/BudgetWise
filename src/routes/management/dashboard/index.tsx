@@ -1,24 +1,73 @@
 import { component$ } from "@builder.io/qwik";
 import { routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
+import { getDashboardData } from "~/lib/server/dashboard-queries";
+import {
+  SummaryCards,
+  SpendingChart,
+  RecentTransactions,
+  BudgetProgress,
+  PeriodSelector,
+} from "~/components/management/dashboard";
 
-export const useDashboard = routeLoader$(async ({ sharedMap }) => {
+function getDateRange(period: string): { start: Date; end: Date } {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+
+  switch (period) {
+    case "last-month": {
+      const start = new Date(year, month - 1, 1);
+      const end = new Date(year, month, 0, 23, 59, 59);
+      return { start, end };
+    }
+    case "this-quarter": {
+      const quarterStart = Math.floor(month / 3) * 3;
+      const start = new Date(year, quarterStart, 1);
+      const end = new Date(year, quarterStart + 3, 0, 23, 59, 59);
+      return { start, end };
+    }
+    case "this-year": {
+      const start = new Date(year, 0, 1);
+      const end = new Date(year, 11, 31, 23, 59, 59);
+      return { start, end };
+    }
+    default: { // this-month
+      const start = new Date(year, month, 1);
+      const end = new Date(year, month + 1, 0, 23, 59, 59);
+      return { start, end };
+    }
+  }
+}
+
+export const useDashboard = routeLoader$(async ({ sharedMap, url }) => {
   const user = getAuthenticatedUser(sharedMap);
-  return { user };
+  const period = url.searchParams.get("period") || "this-month";
+  const { start, end } = getDateRange(period);
+  const data = await getDashboardData(user.id, start, end);
+  return { ...data, period };
 });
 
 export default component$(() => {
   const data = useDashboard();
 
   return (
-    <>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-        Welcome, {data.value.user.firstName} {data.value.user.lastName}
-      </h1>
-      <p class="mt-2 text-gray-600 dark:text-gray-400">
-        Dashboard coming soon.
-      </p>
-    </>
+    <div>
+      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+      <PeriodSelector currentPeriod={data.value.period} />
+      <SummaryCards
+        totalBalance={data.value.totalBalance}
+        totalIncome={data.value.totalIncome}
+        totalExpenses={data.value.totalExpenses}
+        netSavings={data.value.netSavings}
+        transactionCount={data.value.transactionCount}
+      />
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <SpendingChart data={data.value.spendingByCategory} />
+        <BudgetProgress budgets={data.value.budgetProgress} />
+      </div>
+      <RecentTransactions transactions={data.value.recentTransactions as any} />
+    </div>
   );
 });
 
@@ -27,7 +76,7 @@ export const head: DocumentHead = {
   meta: [
     {
       name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
+      content: "Your financial overview - track expenses, income, and budgets",
     },
   ],
 };

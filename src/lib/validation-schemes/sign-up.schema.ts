@@ -1,4 +1,4 @@
-import { z } from "@builder.io/qwik-city";
+import { z } from "zod";
 
 export const SignUpSchemaValidation = {
   email: z.string().email('Email is required'),

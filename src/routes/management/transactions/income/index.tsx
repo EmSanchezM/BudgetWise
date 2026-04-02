@@ -48,7 +48,7 @@ export const useCreateIncomeTransaction = routeAction$(async (data, { sharedMap,
 
   if (!transaction.id) return fail(500, { message: 'Error create transaction' });
 
-  throw redirect(301, MANAGEMENT_ROUTES.TRANSACTIONS);
+  throw redirect(302, MANAGEMENT_ROUTES.TRANSACTIONS);
 }, zod$(CreateTransactionSchemaValidation));
 
 export default component$(() => {

@@ -78,6 +78,8 @@ export default [
       ".rollup.cache/**",
       "server/**",
       ".netlify/**",
+      "**/__tests__/**",
+      "**/*.test.ts",
       "*.spec.tsx",
       "*.spec.ts",
       "vite.config.ts",

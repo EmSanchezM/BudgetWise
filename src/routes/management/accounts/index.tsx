@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/shared";
+import { EmptyState, Pagination } from "~/components/ui";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -44,7 +44,9 @@ export const useAccounts = routeLoader$(async ({ sharedMap, url }) => {
     orm.account.count({ where }),
   ]);
 
-  return { items: accounts, page, totalPages: Math.ceil(total / pageSize) };
+  const totalBalance = accounts.reduce((sum, a) => sum + a.balance, 0);
+
+  return { items: accounts, page, totalPages: Math.ceil(total / pageSize), totalBalance };
 });
 
 export const useDeleteAccount = routeAction$(async (data, { fail, sharedMap }) => {
@@ -60,57 +62,119 @@ export const useDeleteAccount = routeAction$(async (data, { fail, sharedMap }) =
   return { success: true };
 });
 
+const typeIcons: Record<string, string> = {
+  SAVINGS: "savings",
+  CHECKING: "account_balance",
+  INVESTMENT: "trending_up",
+  CREDIT: "credit_card",
+};
+
 export default component$(() => {
   const accounts = useAccounts();
   const deleteAccount = useDeleteAccount();
 
+  const totalFormatted = fromCents(accounts.value.totalBalance).toLocaleString("en-US", { minimumFractionDigits: 2 });
+  const [whole, decimal] = totalFormatted.split(".");
+
   return (
-    <section>
-      <header class="mb-4">
-        <h1 class="font-bold capitalize text-2xl mb-4">Accounts</h1>
-        <Link href="create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create account</Link>
-      </header>
-      <div class="flex gap-2 mb-4 text-sm">
-        <span class="text-gray-500">Sort by:</span>
-        <Link href="?sort=name&order=asc" class="text-indigo-600 hover:underline">Name</Link>
-        <Link href="?sort=balance&order=desc" class="text-indigo-600 hover:underline">Balance</Link>
-        <Link href="?sort=createdAt&order=desc" class="text-indigo-600 hover:underline">Newest</Link>
+    <div class="space-y-8">
+      {/* Header: Total Liquidity */}
+      <section class="space-y-2">
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-[0.1em] font-bold">
+          Total Liquidity
+        </p>
+        <div class="flex items-baseline gap-2">
+          <h1 class="text-[2.75rem] font-black tracking-tighter leading-none text-primary">
+            ${whole}<span class="text-primary/40">.{decimal}</span>
+          </h1>
+        </div>
+      </section>
+
+      {/* Sort chips */}
+      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        <span class="text-on-surface-variant text-[11px] font-bold uppercase tracking-widest self-center mr-1">Sort:</span>
+        <Link href="?sort=name&order=asc" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap">
+          Name
+        </Link>
+        <Link href="?sort=balance&order=desc" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap">
+          Balance
+        </Link>
+        <Link href="?sort=createdAt&order=desc" class="px-3 py-1.5 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap">
+          Newest
+        </Link>
       </div>
-      <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-        {accounts.value.items.length === 0 ? (
-          <EmptyState title="No accounts yet" description="Create your first account to get started." />
-        ) : (
-          accounts.value.items.map(account => {
+
+      {/* Account Cards */}
+      {accounts.value.items.length === 0 ? (
+        <EmptyState title="No accounts yet" description="Create your first account to get started." icon="account_balance" />
+      ) : (
+        <div class="space-y-3">
+          {accounts.value.items.map((account) => {
+            const icon = typeIcons[account.type] || "account_balance";
+
             return (
-              <article class="p-6 bg-white border border-gray-200 rounded-lg shadow">
-                <Link href={`${account.id}`}>
-                  <span class="mb-2 text-2xl font-bold tracking-tight text-gray-900">{account.name} ({account.numberAccount})</span>
-                </Link>
-                <p class="mb-3 font-normal text-gray-700">
-                  <span>{account.user.firstName} {account.user.lastName}</span>
-                  <br />
-                  {GetFormatterForCurrency(account.currency).format(fromCents(account.balance))}
-                  <span class="mb-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ms-3">{account.type}</span>
-                </p>
-                <Link href={`${account.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Detail
-                  <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                  </svg>
-                </Link>
-                <Form action={deleteAccount} class="inline-flex">
-                  <input type="hidden" name="id" value={account.id} />
-                  <button type="submit" class="inline-flex items-center px-3 py-2 mx-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                    Delete
-                  </button>
-                </Form>
-              </article>
-            )
-          })
-        )}
-      </main>
+              <div
+                key={account.id}
+                class="bg-surface-container-lowest rounded-[2rem] p-6 editorial-shadow"
+              >
+                <div class="flex items-start justify-between mb-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-full bg-surface-container-high flex items-center justify-center">
+                      <span class="material-symbols-outlined text-primary">{icon}</span>
+                    </div>
+                    <div>
+                      <h3 class="font-bold text-[15px] tracking-tight">{account.name}</h3>
+                      <p class="text-on-surface-variant text-[12px]">{account.numberAccount}</p>
+                    </div>
+                  </div>
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-on-secondary-container bg-secondary-container/30 px-2 py-0.5 rounded-md">
+                    {account.type}
+                  </span>
+                </div>
+
+                <div class="mb-4">
+                  <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Available Balance</p>
+                  <p class="text-2xl font-black tracking-tighter text-primary">
+                    {GetFormatterForCurrency(account.currency).format(fromCents(account.balance))}
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <Link
+                    href={`${account.id}`}
+                    class="flex items-center gap-1 px-4 py-2 bg-surface-container-high text-primary rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-surface-container-highest transition-colors"
+                  >
+                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                    Detail
+                  </Link>
+                  <Form action={deleteAccount}>
+                    <input type="hidden" name="id" value={account.id} />
+                    <button
+                      type="submit"
+                      class="flex items-center gap-1 px-4 py-2 bg-error-container/20 text-error rounded-xl text-[11px] font-bold uppercase tracking-widest hover:bg-error-container/40 transition-colors"
+                    >
+                      <span class="material-symbols-outlined text-[16px]">delete</span>
+                      Delete
+                    </button>
+                  </Form>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Add New Account */}
+      <Link
+        href="create"
+        class="flex items-center justify-center gap-2 w-full py-4 rounded-[2rem] ghost-border text-primary font-bold text-sm hover:bg-surface-container-low transition-colors active:scale-[0.98]"
+      >
+        <span class="material-symbols-outlined">add</span>
+        Add New Account
+      </Link>
+
       <Pagination currentPage={accounts.value.page} totalPages={accounts.value.totalPages} baseUrl="/management/accounts" />
-    </section>
+    </div>
   );
 });
 
@@ -119,7 +183,7 @@ export const head: DocumentHead = {
   meta: [
     {
       name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
+      content: "Manage your financial accounts",
     },
   ],
 };

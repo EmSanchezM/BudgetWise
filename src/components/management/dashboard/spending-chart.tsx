@@ -11,60 +11,61 @@ interface SpendingChartProps {
   data: SpendingItem[];
 }
 
+const defaultColors = ["#0c1427", "#d0e1fb", "#eceef0", "#505f76", "#ddc39d"];
+
 export const SpendingChart = component$<SpendingChartProps>(({ data }) => {
   if (data.length === 0) {
     return (
-      <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
-        <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Spending by Category</h3>
-        <p class="text-gray-500 dark:text-gray-400 text-center py-8">No expense data for this period.</p>
+      <div class="bg-surface-container-lowest p-6 rounded-[2rem] editorial-shadow">
+        <h3 class="font-bold text-lg tracking-tight mb-4">Spending Flow</h3>
+        <p class="text-on-surface-variant text-sm text-center py-8">No expense data for this period.</p>
       </div>
     );
   }
 
   const total = data.reduce((sum, d) => sum + d.amount, 0);
-  let cumulativePercent = 0;
 
-  // Generate SVG pie chart paths
-  const slices = data.map((item) => {
-    const percent = total > 0 ? item.amount / total : 0;
-    const startAngle = cumulativePercent * 360;
-    cumulativePercent += percent;
-    const endAngle = cumulativePercent * 360;
-
-    const startRad = ((startAngle - 90) * Math.PI) / 180;
-    const endRad = ((endAngle - 90) * Math.PI) / 180;
-    const largeArc = percent > 0.5 ? 1 : 0;
-
-    const x1 = 50 + 40 * Math.cos(startRad);
-    const y1 = 50 + 40 * Math.sin(startRad);
-    const x2 = 50 + 40 * Math.cos(endRad);
-    const y2 = 50 + 40 * Math.sin(endRad);
-
-    const path = data.length === 1
-      ? `M 50 10 A 40 40 0 1 1 49.99 10 Z`
-      : `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`;
-
-    return { ...item, path, percent };
+  // Build conic gradient stops
+  let cumulative = 0;
+  const gradientStops = data.map((item, i) => {
+    const percent = total > 0 ? (item.amount / total) * 100 : 0;
+    const start = cumulative;
+    cumulative += percent;
+    const color = item.color || defaultColors[i % defaultColors.length];
+    return `${color} ${start}% ${cumulative}%`;
   });
 
+  const conicGradient = `conic-gradient(${gradientStops.join(", ")})`;
+
   return (
-    <div class="bg-white dark:bg-gray-800 rounded-lg p-6">
-      <h3 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">Spending by Category</h3>
-      <div class="flex flex-col sm:flex-row items-center gap-6">
-        <svg viewBox="0 0 100 100" class="w-48 h-48">
-          {slices.map((slice) => (
-            <path key={slice.categoryName} d={slice.path} fill={slice.color} stroke="white" stroke-width="0.5" />
-          ))}
-        </svg>
-        <div class="space-y-2 flex-1">
-          {slices.map((slice) => (
-            <div key={slice.categoryName} class="flex items-center justify-between">
+    <div class="bg-surface-container-lowest p-6 rounded-[2rem] editorial-shadow space-y-6">
+      <div class="flex justify-between items-center">
+        <h3 class="font-bold text-lg tracking-tight">Spending Flow</h3>
+        <span class="material-symbols-outlined text-on-surface-variant">data_exploration</span>
+      </div>
+      <div class="flex items-center justify-between">
+        {/* Donut Chart */}
+        <div class="relative w-24 h-24 flex items-center justify-center shrink-0">
+          <div
+            class="absolute inset-0 rounded-full"
+            style={{ background: conicGradient }}
+          ></div>
+          <div class="absolute inset-2 bg-surface-container-lowest rounded-full"></div>
+        </div>
+
+        {/* Legend */}
+        <div class="flex-1 ml-8 space-y-3">
+          {data.slice(0, 5).map((item, i) => (
+            <div key={item.categoryName} class="flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <span class="w-3 h-3 rounded-full inline-block" style={{ backgroundColor: slice.color }}></span>
-                <span class="text-sm text-gray-700 dark:text-gray-300">{slice.categoryName}</span>
+                <div
+                  class="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: item.color || defaultColors[i % defaultColors.length] }}
+                ></div>
+                <span class="text-sm font-medium">{item.categoryName}</span>
               </div>
-              <span class="text-sm font-medium text-gray-900 dark:text-white">
-                ${fromCents(slice.amount).toLocaleString()} ({Math.round(slice.percent * 100)}%)
+              <span class="text-sm font-bold">
+                ${fromCents(item.amount).toLocaleString()}
               </span>
             </div>
           ))}

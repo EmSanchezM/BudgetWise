@@ -13,16 +13,17 @@ export const PeriodSelector = component$<PeriodSelectorProps>(({ currentPeriod }
   ];
 
   return (
-    <div class="flex gap-2 mb-6 flex-wrap">
+    <div class="flex gap-2 mb-8 overflow-x-auto no-scrollbar">
       {periods.map((p) => (
         <a
           key={p.value}
           href={`?period=${p.value}`}
-          class={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+          class={[
+            "px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest whitespace-nowrap transition-all active:scale-95",
             currentPeriod === p.value
-              ? "bg-indigo-600 text-white"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-          }`}
+              ? "bg-gradient-to-br from-primary to-primary-container text-white"
+              : "bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high",
+          ].join(" ")}
         >
           {p.label}
         </a>

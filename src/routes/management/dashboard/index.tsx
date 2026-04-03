@@ -32,7 +32,7 @@ function getDateRange(period: string): { start: Date; end: Date } {
       const end = new Date(year, 11, 31, 23, 59, 59);
       return { start, end };
     }
-    default: { // this-month
+    default: {
       const start = new Date(year, month, 1);
       const end = new Date(year, month + 1, 0, 23, 59, 59);
       return { start, end };
@@ -52,9 +52,9 @@ export default component$(() => {
   const data = useDashboard();
 
   return (
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">Dashboard</h1>
+    <div class="space-y-8">
       <PeriodSelector currentPeriod={data.value.period} />
+
       <SummaryCards
         totalBalance={data.value.totalBalance}
         totalIncome={data.value.totalIncome}
@@ -62,10 +62,12 @@ export default component$(() => {
         netSavings={data.value.netSavings}
         transactionCount={data.value.transactionCount}
       />
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+      <div class="grid grid-cols-1 gap-4">
         <SpendingChart data={data.value.spendingByCategory} />
         <BudgetProgress budgets={data.value.budgetProgress} />
       </div>
+
       <RecentTransactions transactions={data.value.recentTransactions as any} />
     </div>
   );

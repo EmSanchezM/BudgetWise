@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
 import { DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.io/qwik-city";
 
-import { FormGroup } from "~/components/shared/form";
+import { FormGroup } from "~/components/ui";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { getAuthenticatedUser } from "~/lib/auth";
@@ -56,72 +56,23 @@ export default component$(() => {
   const action = useCreateIncomeTransaction();
 
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm border-dashed">
-          <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
-          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create income</h2>
-          <p class="mx-2 my-4 text-center">
-            Record a new income transaction. Select an account and enter the details below.
-          </p>
-        </div>
-        <Form action={action} class="space-y-6">
-          <FormGroup
-            type="select"
-            labelName="Account"
-            id="account"
-            name="account"
-            items={accounts.value.map(account => ({ id: account.id, name: `${account.name}(${account.numberAccount})` }))}
-            errors={action.value?.fieldErrors?.account}
-          />
-
-          <FormGroup
-            type="text"
-            labelName="Transaction name"
-            id="name"
-            name="name"
-            errors={action.value?.fieldErrors?.name}
-          />
-
-          <FormGroup
-            type="date"
-            labelName="Transaction date"
-            id="transactionDate"
-            name="transactionDate"
-            errors={action.value?.fieldErrors?.transactionDate}
-          />
-
-          <FormGroup
-            type="select"
-            labelName="Currency"
-            id="currency"
-            name="currency"
-            items={currencies.map(currency => ({ id: currency.value, name: currency.label }))}
-            errors={action.value?.fieldErrors?.currency}
-          />
-
-          <FormGroup
-            type="number"
-            labelName="Transaction amount"
-            id="amount"
-            name="amount"
-            errors={action.value?.fieldErrors?.amount}
-          />
-
-          <FormGroup
-            type="text"
-            labelName="Description"
-            id="description"
-            name="description"
-            errors={action.value?.fieldErrors?.description}
-          />
-
-          <div>
-            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
-          </div>
+    <div class="max-w-lg mx-auto">
+      <div class="mb-8">
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">New Income</h1>
+        <p class="text-on-surface-variant text-sm leading-relaxed">Record a new income transaction.</p>
+      </div>
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <Form action={action} class="space-y-5">
+          <FormGroup type="select" label="Account" id="account" name="account" items={accounts.value.map(a => ({ id: a.id, name: `${a.name} (${a.numberAccount})` }))} errors={action.value?.fieldErrors?.account} />
+          <FormGroup type="text" label="Name" id="name" name="name" placeholder="e.g. Salary" errors={action.value?.fieldErrors?.name} />
+          <FormGroup type="date" label="Date" id="transactionDate" name="transactionDate" errors={action.value?.fieldErrors?.transactionDate} />
+          <FormGroup type="select" label="Currency" id="currency" name="currency" items={currencies.map(c => ({ id: c.value, name: c.label }))} errors={action.value?.fieldErrors?.currency} />
+          <FormGroup type="number" label="Amount" id="amount" name="amount" placeholder="0" errors={action.value?.fieldErrors?.amount} />
+          <FormGroup type="text" label="Description" id="description" name="description" placeholder="Optional notes" errors={action.value?.fieldErrors?.description} />
+          <button type="submit" disabled={action.isRunning} class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Creating...' : 'Create Income'}</button>
         </Form>
       </div>
-    </section>
+    </div>
   )
 })
 

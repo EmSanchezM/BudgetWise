@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, routeAction$, routeLoader$, zod$, Form } from "@builder.io/qwik-city";
+import { type DocumentHead, routeAction$, routeLoader$, zod$, Form } from "@builder.io/qwik-city";
 
-import { FormGroup } from "~/components/shared/form";
+import { FormGroup } from "~/components/ui";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { getAuthenticatedUser } from "~/lib/auth";
@@ -11,16 +11,10 @@ import { CreateBudgetSchemaValidation } from "~/lib/validation-schemes";
 
 export const useCategories = routeLoader$(async ({ sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
-
-  const categories = await orm.category.findMany({
+  return orm.category.findMany({
     where: { userId: user.id, deletedAt: null },
-    select: {
-      id: true,
-      name: true,
-    }
+    select: { id: true, name: true },
   });
-
-  return categories;
 });
 
 export const useCreateBudget = routeAction$(async (data, { sharedMap, fail, redirect }) => {
@@ -49,78 +43,37 @@ export default component$(() => {
   const action = useCreateBudget();
 
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm border-dashed bg-blue-300">
-          <img class="mx-auto mt-4 h-80 w-auto object-contain" src="/budget-wise.jpg" alt="Budgetwise" width={100} height={40} />
-          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create budget</h2>
-          <p class="mt-10 text-center">
-            Set up a budget to control your spending. Choose a category and define your limits.
-          </p>
-        </div>
-        <Form action={action} class="space-y-6">
-          <FormGroup
-            type="text"
-            labelName="Name"
-            id="name"
-            name="name"
-            errors={action.value?.fieldErrors?.name}
-          />
+    <div class="max-w-lg mx-auto">
+      <div class="mb-8">
+        <a href={MANAGEMENT_ROUTES.BUDGETS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to budgets
+        </a>
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">Set New Budget</h1>
+        <p class="text-on-surface-variant text-sm leading-relaxed">Define your spending limits and take control.</p>
+      </div>
 
-          <FormGroup
-            type="select"
-            labelName="Category"
-            id="category"
-            name="category"
-            items={categories.value}
-            errors={action.value?.fieldErrors?.category}
-          />
-
-          <FormGroup
-            type="select"
-            labelName="Currency"
-            id="currency"
-            name="currency"
-            items={currencies.map(currency => ({ id: currency.value, name: currency.label }))}
-            errors={action.value?.fieldErrors?.currency}
-          />
-          <FormGroup
-            type="number"
-            labelName="Amount"
-            id="amount"
-            name="amount"
-            errors={action.value?.fieldErrors?.amount}
-          />
-          <FormGroup
-            type="date"
-            labelName="Init date"
-            id="initDate"
-            name="initDate"
-            errors={action.value?.fieldErrors?.initDate}
-          />
-          <FormGroup
-            type="date"
-            labelName="Finish date"
-            id="finishDate"
-            name="finishDate"
-            errors={action.value?.fieldErrors?.finishDate}
-          />
-
-          <div>
-            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <Form action={action} class="space-y-5">
+          <FormGroup type="text" label="Name" id="name" name="name" placeholder="e.g. Monthly Groceries" errors={action.value?.fieldErrors?.name} />
+          <FormGroup type="select" label="Category" id="category" name="category" items={categories.value} errors={action.value?.fieldErrors?.category} />
+          <FormGroup type="select" label="Currency" id="currency" name="currency" items={currencies.map(c => ({ id: c.value, name: c.label }))} errors={action.value?.fieldErrors?.currency} />
+          <FormGroup type="number" label="Amount" id="amount" name="amount" placeholder="0" errors={action.value?.fieldErrors?.amount} />
+          <div class="grid grid-cols-2 gap-4">
+            <FormGroup type="date" label="Start Date" id="initDate" name="initDate" errors={action.value?.fieldErrors?.initDate} />
+            <FormGroup type="date" label="End Date" id="finishDate" name="finishDate" errors={action.value?.fieldErrors?.finishDate} />
           </div>
+
+          <button type="submit" disabled={action.isRunning} class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            {action.isRunning ? 'Creating...' : 'Create Budget'}
+          </button>
         </Form>
       </div>
-    </section>
-  )
-})
+    </div>
+  );
+});
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Create budget",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  title: "BudgetWise | Create Budget",
+  meta: [{ name: "description", content: "Create a new budget" }],
 };

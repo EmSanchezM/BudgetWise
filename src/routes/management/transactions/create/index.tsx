@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { type DocumentHead, routeAction$, zod$, Form, routeLoader$, Link } from "@builder.io/qwik-city";
+import { type DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.io/qwik-city";
 
 import { FormGroup } from "~/components/ui";
 
@@ -69,10 +69,10 @@ export default component$(() => {
   return (
     <div class="max-w-lg mx-auto">
       <div class="mb-8">
-        <Link href={MANAGEMENT_ROUTES.TRANSACTIONS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+        <a href={MANAGEMENT_ROUTES.TRANSACTIONS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Back to transactions
-        </Link>
+        </a>
         <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">New Transaction</h1>
         <p class="text-on-surface-variant text-sm leading-relaxed">Record a new transaction in your financial ledger.</p>
       </div>

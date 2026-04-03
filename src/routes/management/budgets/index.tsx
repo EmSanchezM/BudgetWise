@@ -1,5 +1,5 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
@@ -60,10 +60,10 @@ export default component$(() => {
             Master the art of intentional allocation. Discipline today secures the editorial freedom of your financial future.
           </p>
         </div>
-        <Link href="create" class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 lg:px-8 lg:py-4 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shrink-0">
+        <a href="create" class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 lg:px-8 lg:py-4 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shrink-0">
           <span class="material-symbols-outlined">add</span>
           Set New Budget
-        </Link>
+        </a>
       </div>
 
       {/* Budget Cards */}
@@ -79,17 +79,17 @@ export default component$(() => {
                     <span class="material-symbols-outlined text-primary">account_balance_wallet</span>
                   </div>
                   <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Link href={`${budget.id}`} class="p-1 text-outline hover:text-primary transition-colors">
+                    <a href={`${budget.id}`} class="p-1 text-outline hover:text-primary transition-colors">
                       <span class="material-symbols-outlined text-sm">edit</span>
-                    </Link>
+                    </a>
                     <button type="button" onClick$={() => { deleteId.value = budget.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
                       <span class="material-symbols-outlined text-sm">delete</span>
                     </button>
                   </div>
                 </div>
-                <Link href={`${budget.id}`}>
+                <a href={`${budget.id}`}>
                   <h3 class="text-xl font-bold tracking-tight text-primary mb-1 hover:underline">{budget.name}</h3>
-                </Link>
+                </a>
                 <p class="text-on-surface-variant text-[11px] uppercase tracking-widest font-bold mb-4">
                   {budget.initDate.toLocaleDateString()} — {budget.finishDate.toLocaleDateString()}
                 </p>

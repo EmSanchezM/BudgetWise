@@ -1,5 +1,5 @@
 import { component$, useSignal } from "@builder.io/qwik";
-import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
@@ -94,13 +94,13 @@ export default component$(() => {
             Every transaction tells a story. Curate your financial narrative with precision.
           </p>
         </div>
-        <Link
+        <a
           href="create"
           class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 lg:px-8 lg:py-4 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shrink-0"
         >
           <span class="material-symbols-outlined">add</span>
           New Transaction
-        </Link>
+        </a>
       </div>
 
       {/* Filter chips */}
@@ -110,13 +110,13 @@ export default component$(() => {
           { label: "Income", href: "?type=income" },
           { label: "Expense", href: "?type=expense" },
         ].map((filter) => (
-          <Link
+          <a
             key={filter.label}
             href={filter.href}
             class="px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap active:scale-95"
           >
             {filter.label}
-          </Link>
+          </a>
         ))}
       </div>
 
@@ -143,9 +143,9 @@ export default component$(() => {
               </div>
               <div class="ml-4 flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                  <Link href={`${tx.id}`}>
+                  <a href={`${tx.id}`}>
                     <p class="font-bold text-[15px] tracking-tight truncate hover:underline">{tx.name}</p>
-                  </Link>
+                  </a>
                   <span class={[
                     "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md",
                     tx.isExpense ? "bg-error-container/30 text-error" : "bg-on-tertiary-container/10 text-on-tertiary-container",
@@ -165,9 +165,9 @@ export default component$(() => {
                   {tx.isExpense ? "-" : "+"}{GetFormatterForCurrency(tx.currency).format(fromCents(tx.amount))}
                 </p>
                 <div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Link href={`${tx.id}`} class="p-1 text-outline hover:text-primary transition-colors">
+                  <a href={`${tx.id}`} class="p-1 text-outline hover:text-primary transition-colors">
                     <span class="material-symbols-outlined text-sm">edit</span>
-                  </Link>
+                  </a>
                   <button type="button" onClick$={() => { deleteId.value = tx.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
                     <span class="material-symbols-outlined text-sm">delete</span>
                   </button>

@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import orm from "~/lib/orm";
@@ -52,10 +52,10 @@ export default component$(() => {
   return (
     <div class="max-w-lg mx-auto">
       <div class="mb-8">
-        <Link href={MANAGEMENT_ROUTES.BUDGETS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+        <a href={MANAGEMENT_ROUTES.BUDGETS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
           <span class="material-symbols-outlined text-[18px]">arrow_back</span>
           Back to budgets
-        </Link>
+        </a>
         <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">Budget Detail</h1>
       </div>
 

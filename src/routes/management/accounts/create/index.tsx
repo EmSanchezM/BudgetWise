@@ -14,7 +14,7 @@ export const useCreateAccount = routeAction$(async (data, { sharedMap, fail, red
 
   const account = await orm.account.create({
     data: {
-      userId: +user.id,
+      userId: user.id,
       name: data.name,
       numberAccount: data.numberAccount,
       type: data.type,

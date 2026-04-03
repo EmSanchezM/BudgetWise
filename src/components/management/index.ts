@@ -7,6 +7,5 @@ export type { TopNavProps, TopNavUser } from "./top-nav";
 export { ThemeToggle } from "./theme-toggle";
 export { BottomNav } from "./bottom-nav";
 export { DesktopSidebar } from "./desktop-sidebar";
-export type { DesktopSidebarProps } from "./desktop-sidebar";
 export { TopAppBar } from "./top-app-bar";
 export type { TopAppBarProps, TopAppBarUser } from "./top-app-bar";

@@ -16,7 +16,7 @@ export const useAccounts = routeLoader$(async ({ sharedMap, url }) => {
   const orderBy = { [sort]: order };
 
   const where = {
-    userId: +user.id,
+    userId: user.id,
     deletedAt: null
   };
 

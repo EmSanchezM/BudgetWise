@@ -3,6 +3,7 @@ import { Form, Link, routeAction$, zod$ } from "@builder.io/qwik-city";
 import { PUBLIC_ROUTES } from "~/lib/constants";
 import { FormGroup } from "~/components/ui";
 
+import { v7 as uuidv7 } from "uuid";
 import orm from "~/lib/orm";
 import { generateFromPassword } from "~/lib/utils";
 import { SignUpSchemaValidation } from "~/lib/validation-schemes";
@@ -11,6 +12,7 @@ export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
   const hashPassword = await generateFromPassword(data.password);
 
   const payload = {
+    id: uuidv7(),
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,

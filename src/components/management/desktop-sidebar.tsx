@@ -1,5 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { useLocation, Form, type ActionStore } from "@builder.io/qwik-city";
+import { useLocation, Form } from "@builder.io/qwik-city";
+import { useSignOut } from "~/routes/plugin@auth";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 
 interface NavItem {
@@ -21,12 +22,9 @@ const bottomNavItems: NavItem[] = [
   { href: "/management/settings", label: "Settings", icon: "settings" },
 ];
 
-export interface DesktopSidebarProps {
-  logoutAction: ActionStore<Record<string, never>, Record<string, never>>;
-}
-
-export const DesktopSidebar = component$<DesktopSidebarProps>(({ logoutAction }) => {
+export const DesktopSidebar = component$(() => {
   const location = useLocation();
+  const signOut = useSignOut();
 
   const renderNavItem = (item: NavItem) => {
     const isActive = location.url.pathname.startsWith(item.href);
@@ -79,7 +77,7 @@ export const DesktopSidebar = component$<DesktopSidebarProps>(({ logoutAction })
       {/* Bottom nav */}
       <div class="mt-auto flex flex-col gap-1 pt-6 border-t border-slate-200/20">
         {bottomNavItems.map((item) => renderNavItem(item))}
-        <Form action={logoutAction}>
+        <Form action={signOut}>
           <button
             type="submit"
             class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-slate-500 hover:bg-slate-200 w-full"

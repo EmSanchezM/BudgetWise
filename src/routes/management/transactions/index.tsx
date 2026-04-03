@@ -16,7 +16,7 @@ export const useTransactions = routeLoader$(async ({ sharedMap, url }) => {
   const orderBy = { [sort]: order };
 
   const type = url.searchParams.get("type");
-  const where: any = { userId: +user.id, deletedAt: null };
+  const where: { userId: string; deletedAt: null; isExpense?: boolean } = { userId: user.id, deletedAt: null };
   if (type === "income") where.isExpense = false;
   if (type === "expense") where.isExpense = true;
 

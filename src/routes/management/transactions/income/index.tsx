@@ -31,7 +31,7 @@ export const useCreateIncomeTransaction = routeAction$(async (data, { sharedMap,
   const user = getAuthenticatedUser(sharedMap);
 
   const payload = {
-    userId: +user.id,
+    userId: user.id,
     name: data.name,
     transactionDate: new Date(data.transactionDate),
     amount: data.amount,

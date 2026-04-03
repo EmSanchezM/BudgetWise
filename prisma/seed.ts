@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import argon2 from "argon2";
+import { v7 as uuidv7 } from "uuid";
 
 const prisma = new PrismaClient();
 const toCents = (amount: number) => Math.round(amount * 100);
@@ -17,6 +18,7 @@ async function main() {
 
   const user1 = await prisma.user.create({
     data: {
+      id: uuidv7(),
       firstName: "Elvin",
       lastName: "Sanchez",
       email: "elvin@test.com",
@@ -26,6 +28,7 @@ async function main() {
 
   const user2 = await prisma.user.create({
     data: {
+      id: uuidv7(),
       firstName: "Maria",
       lastName: "Lopez",
       email: "maria@test.com",

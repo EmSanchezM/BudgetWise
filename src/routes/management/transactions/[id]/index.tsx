@@ -34,7 +34,7 @@ export const useUpdateTransaction = routeAction$(async (data, { params, fail, sh
   if (isNaN(id)) return fail(400, { message: "Invalid ID" });
 
   await orm.transaction.update({
-    where: { id, userId: +user.id },
+    where: { id, userId: user.id },
     data: {
       name: data.name as string,
       transactionDate: new Date(data.transactionDate as string),

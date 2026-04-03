@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id           Int           @id @default(autoincrement())
+  id           String        @id
   email        String        @unique
   firstName    String
   lastName     String
@@ -31,7 +31,7 @@ model Account {
   currency      String
   balance       Int
   transactions  Transaction[]
-  userId        Int
+  userId        String
   user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -50,7 +50,7 @@ model Transaction {
   isExpense       Boolean
   accountId       Int
   account         Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  userId          Int
+  userId          String
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   categoryId      Int?
   category        Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
@@ -72,7 +72,7 @@ model Budget {
   currency   String
   categoryId Int
   category   Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
-  userId     Int
+  userId     String
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt
@@ -88,7 +88,7 @@ model Category {
   color        String
   budgets      Budget[]
   transactions Transaction[]
-  userId       Int
+  userId       String
   user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -101,6 +101,6 @@ model UserSettings {
   defaultCurrency String @default("USD")
   dateFormat      String @default("MM/DD/YYYY")
   theme           String @default("system")
-  userId          Int    @unique
+  userId          String @unique
   user            User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

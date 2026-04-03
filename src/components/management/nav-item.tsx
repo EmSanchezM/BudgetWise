@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
-import { useLocation, type ActionStore } from "@builder.io/qwik-city";
+import { useLocation } from "@builder.io/qwik-city";
 import { Form } from "@builder.io/qwik-city";
+import { useSignOut } from "~/routes/plugin@auth";
 
 export type NavIcon =
   | "dashboard"
@@ -16,7 +17,6 @@ export interface NavItemProps {
   href: string;
   label: string;
   icon: NavIcon;
-  logoutAction?: ActionStore<Record<string, never>, Record<string, never>>;
 }
 
 const DashboardIcon = component$(() => (
@@ -122,8 +122,9 @@ const iconMap: Record<NavIcon, ReturnType<typeof component$>> = {
 };
 
 export const NavItem = component$<NavItemProps>(
-  ({ href, label, icon, logoutAction }) => {
+  ({ href, label, icon }) => {
     const location = useLocation();
+    const signOut = useSignOut();
     const isActive = location.url.pathname.startsWith(href);
     const Icon = iconMap[icon];
 
@@ -133,10 +134,10 @@ export const NavItem = component$<NavItemProps>(
       ? " bg-gray-100 dark:bg-gray-700"
       : "";
 
-    if (icon === "logout" && logoutAction) {
+    if (icon === "logout") {
       return (
         <li>
-          <Form action={logoutAction}>
+          <Form action={signOut}>
             <button
               type="submit"
               class={`${baseClasses} w-full${activeClasses}`}

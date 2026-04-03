@@ -63,11 +63,13 @@
     "undici": "7.24.7",
     "vite": "6.4.1",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "^4.1.2",
-    "zod": "^3.25.48"
+    "vitest": "4.1.2",
+    "zod": "3.25.48"
   },
   "dependencies": {
+    "@auth/core": "0.34.3",
+    "@auth/qwik": "0.9.1",
     "argon2": "0.44.0",
-    "jose": "^6.2.2"
+    "uuid": "13.0.0"
   }
 }

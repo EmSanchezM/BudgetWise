@@ -9,16 +9,16 @@ importers:
   .:
     dependencies:
       '@auth/core':
-        specifier: ^0.34.3
+        specifier: 0.34.3
         version: 0.34.3
       '@auth/qwik':
-        specifier: ^0.9.1
+        specifier: 0.9.1
         version: 0.9.1
       argon2:
         specifier: 0.44.0
         version: 0.44.0
       uuid:
-        specifier: ^13.0.0
+        specifier: 13.0.0
         version: 13.0.0
     devDependencies:
       '@builder.io/qwik':

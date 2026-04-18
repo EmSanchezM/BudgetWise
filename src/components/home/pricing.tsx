@@ -7,23 +7,23 @@ const plans = [
     name: "Free",
     price: "$0",
     period: "forever",
-    description: "Perfect for getting started with personal finance.",
+    description: "Everything you need to start tracking your money.",
     features: ["Track income & expenses", "Custom categories", "Multi-currency", "Community support"],
   },
   {
     name: "Standard",
     price: "$9",
     period: "/month",
-    description: "For the serious curator who demands more.",
-    features: ["Everything in Free", "Budget automation", "Analytics dashboard", "Priority support"],
+    description: "For people who want deeper insight and automation.",
+    features: ["Everything in Free", "Automatic categorization", "Analytics dashboard", "Priority support"],
     featured: true,
   },
   {
     name: "Premium",
     price: "$19",
     period: "/month",
-    description: "Full editorial suite for financial mastery.",
-    features: ["Everything in Standard", "Advanced reports", "API access", "Dedicated advisor"],
+    description: "Advanced reports, exports, and power features.",
+    features: ["Everything in Standard", "Advanced reports", "PDF & CSV export", "API access"],
   },
 ];
 

@@ -4,21 +4,21 @@ import { PUBLIC_ROUTES } from "~/lib/constants";
 
 export const Footer = component$(() => {
   return (
-    <footer class="px-6 pb-12">
+    <footer class="max-w-7xl mx-auto px-6 pb-12">
       {/* CTA Section */}
       <section class="mb-12">
-        <div class="bg-primary-container rounded-[2.5rem] p-10 text-center">
-          <h3 class="text-white text-3xl font-black tracking-tighter mb-4">
-            Ready for clarity?
+        <div class="bg-primary-container rounded-[2.5rem] p-10 lg:p-16 text-center">
+          <h3 class="text-white text-3xl lg:text-5xl font-black tracking-tighter mb-4">
+            Ready to see where your money goes?
           </h3>
-          <p class="text-white/60 text-sm mb-8">
-            Join 50,000+ professionals curating their wealth with BudgetWise.
+          <p class="text-white/60 text-sm lg:text-base mb-8 max-w-md mx-auto">
+            Join thousands tracking their finances with clarity — no ads, no noise, just your data.
           </p>
           <Link
             href={PUBLIC_ROUTES.SIGN_UP}
-            class="block w-full bg-white text-primary py-4 rounded-xl font-bold active:scale-95 transition-transform text-center"
+            class="block w-full sm:inline-block sm:w-auto sm:px-10 bg-white text-primary py-4 rounded-xl font-bold active:scale-95 transition-transform text-center"
           >
-            Get Started Now
+            Get Started Free
           </Link>
         </div>
       </section>

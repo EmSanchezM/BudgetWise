@@ -1,8 +1,9 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, routeAction$, zod$ } from "@builder.io/qwik-city";
-import { FormGroup } from "~/components/shared/form";
+import { Form, Link, routeAction$, zod$ } from "@builder.io/qwik-city";
 import { PUBLIC_ROUTES } from "~/lib/constants";
+import { FormGroup } from "~/components/ui";
 
+import { v7 as uuidv7 } from "uuid";
 import orm from "~/lib/orm";
 import { generateFromPassword } from "~/lib/utils";
 import { SignUpSchemaValidation } from "~/lib/validation-schemes";
@@ -11,6 +12,7 @@ export const useSignUp = routeAction$(async (data, { fail, redirect }) => {
   const hashPassword = await generateFromPassword(data.password);
 
   const payload = {
+    id: uuidv7(),
     firstName: data.firstName,
     lastName: data.lastName,
     email: data.email,
@@ -28,51 +30,85 @@ export default component$(() => {
   const action = useSignUp();
 
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm border-dashed bg-blue-300">
-          <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Budgetwise" width={100} height={40} />
-          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign up</h2>
+    <section class="flex items-center justify-center min-h-[calc(100vh-12rem)] px-6">
+      <div class="w-full max-w-md">
+        {/* Header */}
+        <div class="mb-10">
+          <div class="inline-block px-3 py-1 bg-secondary-container/30 text-on-secondary-container rounded-full text-[10px] font-bold tracking-widest uppercase mb-6">
+            Get Started
+          </div>
+          <h1 class="font-headline font-black text-4xl tracking-tighter text-primary leading-[0.95] mb-3">
+            Create your account
+          </h1>
+          <p class="text-secondary text-sm leading-relaxed">
+            Begin your journey to financial clarity.
+          </p>
         </div>
-        <Form action={action} class="space-y-6">
-          <FormGroup
-            type="text"
-            labelName="First name"
-            id="firstName"
-            name="firstName"
-            errors={action.value?.fieldErrors?.firstName}
-          />
 
-          <FormGroup
-            type="text"
-            labelName="Last name"
-            id="lastName"
-            name="lastName"
-            errors={action.value?.fieldErrors?.lastName}
-          />
+        {/* Error message */}
+        {action.value?.message && (
+          <div class="mb-6 p-4 bg-error-container/30 rounded-xl">
+            <p class="text-error text-sm font-medium">{action.value.message}</p>
+          </div>
+        )}
+
+        {/* Form */}
+        <Form action={action} class="space-y-5">
+          <div class="grid grid-cols-2 gap-4">
+            <FormGroup
+              type="text"
+              label="First name"
+              id="firstName"
+              name="firstName"
+              placeholder="John"
+              errors={action.value?.fieldErrors?.firstName}
+            />
+
+            <FormGroup
+              type="text"
+              label="Last name"
+              id="lastName"
+              name="lastName"
+              placeholder="Doe"
+              errors={action.value?.fieldErrors?.lastName}
+            />
+          </div>
 
           <FormGroup
             type="email"
-            labelName="Email address"
+            label="Email address"
             id="email"
             name="email"
+            placeholder="you@example.com"
             errors={action.value?.fieldErrors?.email}
           />
 
           <FormGroup
             type="password"
-            labelName="Password"
+            label="Password"
             id="password"
             name="password"
+            placeholder="Create a strong password"
             errors={action.value?.fieldErrors?.password}
           />
 
-          <div>
-            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Sign up'}</button>
-          </div>
+          <button
+            type="submit"
+            disabled={action.isRunning}
+            class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {action.isRunning ? 'Creating account...' : 'Create Account'}
+          </button>
         </Form>
-      </div>
 
+        {/* Footer link */}
+        <p class="mt-8 text-center text-sm text-on-surface-variant">
+          Already have an account?{' '}
+          <Link href={PUBLIC_ROUTES.SIGN_IN} class="text-primary font-bold hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
     </section>
-  )
-})
+  );
+});

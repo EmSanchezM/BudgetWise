@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, type DocumentHead, routeAction$, zod$ } from "@builder.io/qwik-city";
-import { FormGroup } from "~/components/shared/form";
+import { Form, Link, type DocumentHead, routeAction$, zod$ } from "@builder.io/qwik-city";
+import { FormGroup } from "~/components/ui";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { getAuthenticatedUser } from "~/lib/auth";
 
@@ -29,55 +29,38 @@ export default component$(() => {
   const action = useCreateCategory();
 
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm border-dashed">
-          <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
-          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create category</h2>
-          <p class="mx-2 my-4 text-center">
-            Create a new category to organize your transactions and budgets. Assign a name, description, and color.
-          </p>
-        </div>
-        <Form action={action} class="space-y-6">
-          <FormGroup
-            type="text"
-            labelName="Name"
-            id="name"
-            name="name"
-            errors={action.value?.fieldErrors?.name}
-          />
+    <div class="max-w-lg mx-auto">
+      <div class="mb-8">
+        <Link href={MANAGEMENT_ROUTES.CATEGORIES} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to categories
+        </Link>
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">Create Category</h1>
+        <p class="text-on-surface-variant text-sm leading-relaxed">
+          Organize your transactions and budgets with custom categories.
+        </p>
+      </div>
 
-          <FormGroup
-            type="text"
-            labelName="Description"
-            id="description"
-            name="description"
-            errors={action.value?.fieldErrors?.description}
-          />
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <Form action={action} class="space-y-5">
+          <FormGroup type="text" label="Name" id="name" name="name" placeholder="e.g. Food & Dining" errors={action.value?.fieldErrors?.name} />
+          <FormGroup type="text" label="Description" id="description" name="description" placeholder="e.g. Restaurants, groceries, delivery" errors={action.value?.fieldErrors?.description} />
+          <FormGroup type="text" label="Color" id="color" name="color" placeholder="e.g. #4A90D9" errors={action.value?.fieldErrors?.color} />
 
-          <FormGroup
-            type="text"
-            labelName="Color"
-            id="color"
-            name="color"
-            errors={action.value?.fieldErrors?.color}
-          />
-
-          <div>
-            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
-          </div>
+          <button
+            type="submit"
+            disabled={action.isRunning}
+            class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {action.isRunning ? 'Creating...' : 'Create Category'}
+          </button>
         </Form>
       </div>
-    </section>
+    </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Category",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  title: "BudgetWise | Create Category",
+  meta: [{ name: "description", content: "Create a new financial category" }],
 };

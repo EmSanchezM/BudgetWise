@@ -1,6 +1,6 @@
 import orm from "~/lib/orm";
 
-export async function getDashboardData(userId: number, startDate: Date, endDate: Date) {
+export async function getDashboardData(userId: string, startDate: Date, endDate: Date) {
   // Total balance across all accounts
   const totalBalance = await orm.account.aggregate({
     where: { userId, deletedAt: null },

@@ -1,7 +1,7 @@
 import { component$ } from "@builder.io/qwik";
-import { DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.io/qwik-city";
+import { type DocumentHead, routeAction$, zod$, Form, routeLoader$ } from "@builder.io/qwik-city";
 
-import { FormGroup } from "~/components/shared/form";
+import { FormGroup } from "~/components/ui";
 
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import { getAuthenticatedUser } from "~/lib/auth";
@@ -12,44 +12,25 @@ import { CreateTransactionSchemaValidation } from "~/lib/validation-schemes";
 
 export const useAccounts = routeLoader$(async ({ sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
-
-  const accounts = await orm.account.findMany({
-    where: {
-      userId: user.id,
-      deletedAt: null
-    },
-    select: {
-      id: true,
-      name: true,
-      numberAccount: true,
-    }
-  })
-
-  return accounts
-})
+  return orm.account.findMany({
+    where: { userId: user.id, deletedAt: null },
+    select: { id: true, name: true, numberAccount: true },
+  });
+});
 
 export const useCategories = routeLoader$(async ({ sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
-
-  const categories = await orm.category.findMany({
-    where: {
-      userId: user.id,
-      deletedAt: null
-    },
-    select: {
-      id: true,
-      name: true,
-    }
+  return orm.category.findMany({
+    where: { userId: user.id, deletedAt: null },
+    select: { id: true, name: true },
   });
-
-  return categories;
 });
 
 export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail, redirect }) => {
   const user = getAuthenticatedUser(sharedMap);
 
   const payload = {
-    userId: +user.id,
+    userId: user.id,
     name: data.name,
     transactionDate: new Date(data.transactionDate),
     amount: data.amount,
@@ -58,20 +39,17 @@ export const useCreateTransaction = routeAction$(async (data, { sharedMap, fail,
     accountId: data.account,
     isExpense: data.isExpense === 'true',
     categoryId: data.category ? Number(data.category) : undefined,
-  }
+  };
 
   const isExpense = data.isExpense === 'true';
-  const amount = data.amount; // already in cents from validation transform
+  const amount = data.amount;
 
   const [transaction] = await orm.$transaction([
-    orm.transaction.create({
-      data: payload,
-      select: { id: true }
-    }),
+    orm.transaction.create({ data: payload, select: { id: true } }),
     orm.account.update({
       where: { id: data.account },
-      data: { balance: { increment: isExpense ? -amount : amount } }
-    })
+      data: { balance: { increment: isExpense ? -amount : amount } },
+    }),
   ]);
 
   if (!transaction.id) return fail(500, { message: 'Error create transaction' });
@@ -89,102 +67,37 @@ export default component$(() => {
   const action = useCreateTransaction();
 
   return (
-    <section class="max-w-screen-xl mt-8 mb-6 sm:mt-14 sm:mb-14 px-6 sm:px-8 lg:px-16 mx-auto">
-      <div class="grid grid-flow-row sm:grid-flow-col grid-rows-2 md:grid-rows-1 sm:grid-cols-2 gap-8 py-6 sm:py-16">
-        <div class="sm:mx-auto sm:w-full sm:max-w-sm border-dashed">
-          <img class="mx-auto h-72 w-auto object-cover" src="/girl-planning-budget-with-tablet-and-piggy-bank.png" alt="Budgetwise" width={100} height={40} />
-          <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Create transaction</h2>
-          <p class="mx-2 my-4 text-center">
-            Record a new transaction. Select an account, choose income or expense, and enter the details below.
-          </p>
-        </div>
-        <Form action={action} class="space-y-6">
-          <FormGroup
-            type="select"
-            labelName="Transaction type"
-            id="isExpense"
-            name="isExpense"
-            items={[
-              { id: 'false', name: 'Income' },
-              { id: 'true', name: 'Expense' },
-            ]}
-            errors={action.value?.fieldErrors?.isExpense}
-          />
+    <div class="max-w-lg mx-auto">
+      <div class="mb-8">
+        <a href={MANAGEMENT_ROUTES.TRANSACTIONS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to transactions
+        </a>
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">New Transaction</h1>
+        <p class="text-on-surface-variant text-sm leading-relaxed">Record a new transaction in your financial ledger.</p>
+      </div>
 
-          <FormGroup
-            type="select"
-            labelName="Account"
-            id="account"
-            name="account"
-            items={accounts.value.map(account => ({ id: account.id, name: `${account.name}(${account.numberAccount})` }))}
-            errors={action.value?.fieldErrors?.account}
-          />
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <Form action={action} class="space-y-5">
+          <FormGroup type="select" label="Transaction Type" id="isExpense" name="isExpense" items={[{ id: 'false', name: 'Income' }, { id: 'true', name: 'Expense' }]} errors={action.value?.fieldErrors?.isExpense} />
+          <FormGroup type="select" label="Account" id="account" name="account" items={accounts.value.map(a => ({ id: a.id, name: `${a.name} (${a.numberAccount})` }))} errors={action.value?.fieldErrors?.account} />
+          <FormGroup type="select" label="Category" id="category" name="category" placeholder="Select category (optional)" items={categories.value.map(c => ({ id: c.id, name: c.name }))} errors={action.value?.fieldErrors?.category} />
+          <FormGroup type="text" label="Name" id="name" name="name" placeholder="e.g. Coffee at Blue Door" errors={action.value?.fieldErrors?.name} />
+          <FormGroup type="date" label="Date" id="transactionDate" name="transactionDate" errors={action.value?.fieldErrors?.transactionDate} />
+          <FormGroup type="select" label="Currency" id="currency" name="currency" items={currencies.map(c => ({ id: c.value, name: c.label }))} errors={action.value?.fieldErrors?.currency} />
+          <FormGroup type="number" label="Amount" id="amount" name="amount" placeholder="0" errors={action.value?.fieldErrors?.amount} />
+          <FormGroup type="text" label="Description" id="description" name="description" placeholder="Optional notes" errors={action.value?.fieldErrors?.description} />
 
-          <FormGroup
-            type="select"
-            labelName="Category"
-            id="category"
-            name="category"
-            items={categories.value.map(category => ({ id: category.id, name: category.name }))}
-            errors={action.value?.fieldErrors?.category}
-          />
-
-          <FormGroup
-            type="text"
-            labelName="Transaction name"
-            id="name"
-            name="name"
-            errors={action.value?.fieldErrors?.name}
-          />
-
-          <FormGroup
-            type="date"
-            labelName="Transaction date"
-            id="transactionDate"
-            name="transactionDate"
-            errors={action.value?.fieldErrors?.transactionDate}
-          />
-
-          <FormGroup
-            type="select"
-            labelName="Currency"
-            id="currency"
-            name="currency"
-            items={currencies.map(currency => ({ id: currency.value, name: currency.label }))}
-            errors={action.value?.fieldErrors?.currency}
-          />
-
-          <FormGroup
-            type="number"
-            labelName="Transaction amount"
-            id="amount"
-            name="amount"
-            errors={action.value?.fieldErrors?.amount}
-          />
-
-          <FormGroup
-            type="text"
-            labelName="Description"
-            id="description"
-            name="description"
-            errors={action.value?.fieldErrors?.description}
-          />
-
-          <div>
-            <button type="submit" disabled={action.isRunning} class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-50 disabled:cursor-not-allowed">{action.isRunning ? 'Loading...' : 'Create'}</button>
-          </div>
+          <button type="submit" disabled={action.isRunning} class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+            {action.isRunning ? 'Creating...' : 'Create Transaction'}
+          </button>
         </Form>
       </div>
-    </section>
-  )
-})
+    </div>
+  );
+});
 
 export const head: DocumentHead = {
-  title: "BudgetWise | Create transaction",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  title: "BudgetWise | Create Transaction",
+  meta: [{ name: "description", content: "Create a new financial transaction" }],
 };

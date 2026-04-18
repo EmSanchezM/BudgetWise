@@ -1,5 +1,5 @@
 import { component$ } from "@builder.io/qwik";
-import { routeLoader$, type DocumentHead, routeAction$, Form } from "@builder.io/qwik-city";
+import { routeLoader$, type DocumentHead, routeAction$, Form, Link } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
 import { MANAGEMENT_ROUTES } from "~/lib/constants";
 
@@ -29,65 +29,46 @@ export const useUpdateCategory = routeAction$(async (data, { params, redirect, f
   if (!category.id) return fail(500, { message: 'Fail updated category' });
 
   throw redirect(302, MANAGEMENT_ROUTES.CATEGORIES);
-})
+});
 
 export default component$(() => {
   const category = useCategory();
   const action = useUpdateCategory();
 
-  if (category.value.message) return (<p>{category.value?.message}</p>)
+  if (category.value.message) return (<p class="text-error">{category.value?.message}</p>);
 
   return (
-    <Form action={action} class="space-y-6">
-      <div>
-        <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
-        <div class="mt-2">
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={category.value?.name ?? action.formData?.get('name')}
-            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
+    <div class="max-w-lg mx-auto">
+      <div class="mb-8">
+        <Link href={MANAGEMENT_ROUTES.CATEGORIES} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to categories
+        </Link>
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">Edit Category</h1>
       </div>
-      <div>
-        <label for="description" class="block text-sm font-medium leading-6 text-gray-900">Description</label>
-        <div class="mt-2">
-          <input
-            type="text"
-            id="description"
-            name="description"
-            value={category.value?.description ?? action.formData?.get('description')}
-            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
+
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <Form action={action} class="space-y-5">
+          <div>
+            <label for="name" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Name</label>
+            <input type="text" id="name" name="name" value={category.value?.name ?? action.formData?.get('name')} class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20" />
+          </div>
+          <div>
+            <label for="description" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Description</label>
+            <input type="text" id="description" name="description" value={category.value?.description ?? action.formData?.get('description')} class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20" />
+          </div>
+          <div>
+            <label for="color" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Color</label>
+            <input type="text" id="color" name="color" value={category.value?.color ?? action.formData?.get('color')} class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20" />
+          </div>
+          <button type="submit" class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all">Update Category</button>
+        </Form>
       </div>
-      <div>
-        <label for="color" class="block text-sm font-medium leading-6 text-gray-900">Color</label>
-        <div class="mt-2">
-          <input
-            type="text"
-            id="color"
-            name="color"
-            value={category.value?.color ?? action.formData?.get('color')}
-            class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-          />
-        </div>
-      </div>
-      <div>
-        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Update</button>
-      </div>
-    </Form>
+    </div>
   );
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise App | Detail category",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  title: "BudgetWise | Edit Category",
+  meta: [{ name: "description", content: "Edit category details" }],
 };

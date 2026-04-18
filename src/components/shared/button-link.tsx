@@ -1,6 +1,8 @@
-import { QRL, Slot, component$, useContext } from "@builder.io/qwik";
-import { HeaderContext } from "../home";
+import { type QRL, type Signal, Slot, component$, useContext, createContextId } from "@builder.io/qwik";
 import { Link } from "@builder.io/qwik-city";
+
+/** @deprecated Will be removed in Fase 6 cleanup */
+const HeaderContext = createContextId<Signal<string>>('header.active-link-context');
 
 interface LinkProps {
   href: string;

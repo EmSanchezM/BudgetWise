@@ -1,135 +1,125 @@
-import { component$, useStylesScoped$ } from "@builder.io/qwik";
-import { ButtonOutline } from "../shared";
+import { component$ } from "@builder.io/qwik";
+import { Link } from "@builder.io/qwik-city";
+import { PUBLIC_ROUTES } from "~/lib/constants";
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    period: "forever",
+    description: "Everything you need to start tracking your money.",
+    features: ["Track income & expenses", "Custom categories", "Multi-currency", "Community support"],
+  },
+  {
+    name: "Standard",
+    price: "$9",
+    period: "/month",
+    description: "For people who want deeper insight and automation.",
+    features: ["Everything in Free", "Automatic categorization", "Analytics dashboard", "Priority support"],
+    featured: true,
+  },
+  {
+    name: "Premium",
+    price: "$19",
+    period: "/month",
+    description: "Advanced reports, exports, and power features.",
+    features: ["Everything in Standard", "Advanced reports", "PDF & CSV export", "API access"],
+  },
+];
 
 export const Pricing = component$(() => {
-  useStylesScoped$(`
-    li.custom-list:before {
-      content: "\x2022";
-      text-indent: -9999999px;
-      width: .4em;
-      height: 1em;
-      background-repeat: no-repeat;
-      background-size: .4em .7em;
-      background-position: 0 .3em;
-      font-size: 300%;
-      top: -.35em;
-      position: absolute;
-      display: block
-    }
-  
-    li.check:before {
-      left: -.5em;
-      background-image: url(/jam_check.svg);
-      top: -.5em;
-      font-size: 400%
-    }
-  `);
-
   return (
-    <section class="bg-gradient-to-b from-white-300 to-white-500 w-full py-14" id="pricing">
-      <div class="max-w-screen-xl px-6 sm:px-8 lg:px-16 mx-auto flex flex-col w-full text-center justify-center">
-        <div class="flex flex-col w-full">
-          <div>
-            <h3 class="text-2xl sm:text-3xl lg:text-4xl font-medium text-black-600 leading-relaxed">Choose Your Plan</h3>
-            <p class="leading-normal w-10/12 sm:w-7/12 lg:w-6/12 mx-auto my-2 text-center">
-              Let's choose the package that is best for you and explore it happily
-              and cheerfully.
-            </p>
+    <section class="px-6 max-w-4xl mx-auto" id="pricing">
+      {/* Header */}
+      <div class="text-center mb-12">
+        <h2 class="text-xs font-bold uppercase tracking-[0.2em] text-slate-400 mb-4">
+          Pricing
+        </h2>
+        <h3 class="font-headline font-black text-4xl tracking-tighter text-primary leading-[0.95] mb-4">
+          Choose your plan
+        </h3>
+        <p class="text-secondary text-base leading-relaxed max-w-md mx-auto">
+          Select the tier that matches your ambition. Upgrade or downgrade anytime.
+        </p>
+      </div>
+
+      {/* Plans grid */}
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {plans.map((plan) => (
+          <div
+            key={plan.name}
+            class={[
+              "rounded-[2rem] p-8 flex flex-col",
+              plan.featured
+                ? "bg-primary text-white editorial-shadow"
+                : "bg-surface-container-lowest editorial-shadow",
+            ].join(" ")}
+          >
+            <div class="mb-6">
+              <div class={[
+                "text-[10px] font-bold uppercase tracking-widest mb-3",
+                plan.featured ? "text-white/60" : "text-slate-400",
+              ].join(" ")}>
+                {plan.name}
+              </div>
+              <div class="flex items-baseline gap-1">
+                <span class={[
+                  "text-4xl font-black tracking-tighter",
+                  plan.featured ? "text-white" : "text-primary",
+                ].join(" ")}>
+                  {plan.price}
+                </span>
+                <span class={[
+                  "text-sm font-medium",
+                  plan.featured ? "text-white/60" : "text-on-surface-variant",
+                ].join(" ")}>
+                  {plan.period}
+                </span>
+              </div>
+              <p class={[
+                "text-sm mt-2 leading-relaxed",
+                plan.featured ? "text-white/70" : "text-secondary",
+              ].join(" ")}>
+                {plan.description}
+              </p>
+            </div>
+
+            <ul class="space-y-3 mb-8 flex-1">
+              {plan.features.map((feature) => (
+                <li
+                  key={feature}
+                  class="flex items-center gap-2.5 text-sm"
+                >
+                  <span
+                    class={[
+                      "material-symbols-outlined text-[18px]",
+                      plan.featured ? "text-primary-fixed" : "text-primary",
+                    ].join(" ")}
+                    style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24"
+                  >
+                    check_circle
+                  </span>
+                  <span class={plan.featured ? "text-white/90" : "text-on-surface-variant"}>
+                    {feature}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <Link
+              href={PUBLIC_ROUTES.SIGN_UP}
+              class={[
+                "block w-full py-3.5 rounded-xl font-bold text-center text-sm active:scale-95 transition-transform",
+                plan.featured
+                  ? "bg-white text-primary"
+                  : "bg-surface-container-high text-primary",
+              ].join(" ")}
+            >
+              Get Started
+            </Link>
           </div>
-          <div class="grid grid-flow-row sm:grid-flow-col grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-12 py-8 lg:py-12 px-6 sm:px-0 lg:px-6">
-            <article class="flex justify-center">
-              <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
-                <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="/Free.png" width={145} height={165} alt="Free Plan" />
-                </div>
-                <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
-                  Free Plan
-                </p>
-                <ul class="flex flex-col list-inside pl-6 xl:pl-0 items-start justify-start text-left text-black-500 flex-grow">
-                  <li class="relative check custom-list my-2">
-                    Track your income & expenses
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Customize your own categories
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Worldwide currencies
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    We're there for you 24/7
-                  </li>
-                </ul>
-                <div class="flex flex-col w-full justify-center mb-8 flex-none mt-12">
-                  <p class="text-2xl text-black-600 text-center mb-4 ">
-                    Free
-                  </p>
-                  <ButtonOutline href="/">Select</ButtonOutline>
-                </div>
-              </main>
-            </article>
-            <article class="flex justify-center">
-              <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
-                <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="/Standard.png" width={145} height={165} alt="Standard Plan" />
-                </div>
-                <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
-                  Standard Plan
-                </p>
-                <ul class="flex flex-col list-inside pl-6 xl:pl-0 items-start justify-start text-left text-black-500 flex-grow">
-                  <li class="relative check custom-list my-2">
-                    Track your income & expenses
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Customize your own categories
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Worldwide currencies
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    We're there for you 24/7
-                  </li>
-                </ul>
-                <div class="flex flex-col w-full justify-center mb-8 flex-none mt-12">
-                  <p class="text-2xl text-black-600 text-center mb-4 ">
-                    Standard
-                  </p>
-                  <ButtonOutline href="/">Select</ButtonOutline>
-                </div>
-              </main>
-            </article>
-            <article class="flex justify-center">
-              <main class="flex flex-col justify-center items-center border-2 border-gray-500 rounded-xl py-4 px-6 lg:px-12 xl:px-20">
-                <div class="p-4 lg:p-0 mt-6 lg:mt-16">
-                  <img src="/Premium.png" width={145} height={165} alt="Premium Plan" />
-                </div>
-                <p class="text-lg text-black-600 font-medium capitalize my-2 sm:my-7">
-                  Premium Plan
-                </p>
-                <ul class="flex flex-col list-inside pl-6 xl:pl-0 items-start justify-start text-left text-black-500 flex-grow">
-                  <li class="relative check custom-list my-2">
-                    Track your income & expenses
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Customize your own categories
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    Worldwide currencies
-                  </li>
-                  <li class="relative check custom-list my-2">
-                    We're there for you 24/7
-                  </li>
-                </ul>
-                <div class="flex flex-col w-full justify-center mb-8 flex-none mt-12">
-                  <p class="text-2xl text-black-600 text-center mb-4 ">
-                    Premium
-                  </p>
-                  <ButtonOutline href="/">Select</ButtonOutline>
-                </div>
-              </main>
-            </article>
-          </div>
-        </div>
+        ))}
       </div>
     </section>
-  )
-})
+  );
+});

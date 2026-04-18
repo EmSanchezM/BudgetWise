@@ -1,7 +1,7 @@
-import { component$ } from "@builder.io/qwik";
-import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { component$, useSignal } from "@builder.io/qwik";
+import { Form, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
-import { EmptyState, Pagination } from "~/components/shared";
+import { EmptyState, Pagination, ConfirmDialog } from "~/components/ui";
 
 import orm from "~/lib/orm";
 import { fromCents, GetFormatterForCurrency } from "~/lib/utils";
@@ -16,7 +16,7 @@ export const useTransactions = routeLoader$(async ({ sharedMap, url }) => {
   const orderBy = { [sort]: order };
 
   const type = url.searchParams.get("type");
-  const where: any = { userId: +user.id, deletedAt: null };
+  const where: { userId: string; deletedAt: null; isExpense?: boolean } = { userId: user.id, deletedAt: null };
   if (type === "income") where.isExpense = false;
   if (type === "expense") where.isExpense = true;
 
@@ -31,17 +31,8 @@ export const useTransactions = routeLoader$(async ({ sharedMap, url }) => {
         transactionDate: true,
         description: true,
         isExpense: true,
-        account: {
-          select: {
-            name: true,
-          }
-        },
-        user: {
-          select: {
-            firstName: true,
-            lastName: true,
-          }
-        }
+        account: { select: { name: true } },
+        user: { select: { firstName: true, lastName: true } },
       },
       orderBy,
       skip: (page - 1) * pageSize,
@@ -65,7 +56,6 @@ export const useDeleteTransaction = routeAction$(async (data, { fail, sharedMap 
 
   if (!transaction) return fail(404, { message: "Transaction not found" });
 
-  // Reverse the balance: if it was expense (-amount), add it back; if income (+amount), subtract it
   const balanceAdjustment = transaction.isExpense ? transaction.amount : -transaction.amount;
 
   await orm.$transaction([
@@ -82,72 +72,125 @@ export const useDeleteTransaction = routeAction$(async (data, { fail, sharedMap 
   return { success: true };
 });
 
+function formatDate(date: string | Date): string {
+  return new Date(String(date)).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
 export default component$(() => {
   const transactions = useTransactions();
   const deleteTransaction = useDeleteTransaction();
+  const showDeleteDialog = useSignal(false);
+  const deleteId = useSignal<number | null>(null);
 
   return (
-    <section>
-      <header class="mb-4">
-        <h1 class="font-bold capitalize text-2xl mb-4">Transactions</h1>
-        <Link href="create" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create transaction</Link>
-      </header>
-      <div class="flex gap-2 mb-4 text-sm">
-        <span class="text-gray-500">Filter:</span>
-        <Link href="?type=" class="text-indigo-600 hover:underline">All</Link>
-        <Link href="?type=income" class="text-indigo-600 hover:underline">Income</Link>
-        <Link href="?type=expense" class="text-indigo-600 hover:underline">Expense</Link>
+    <div class="space-y-8">
+      {/* Header */}
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div>
+          <h1 class="text-primary font-headline font-bold text-[2.5rem] lg:text-[3.5rem] leading-[1.1] tracking-tight mb-2">
+            Ledger
+          </h1>
+          <p class="text-on-surface-variant text-sm lg:text-base leading-relaxed max-w-lg">
+            Every transaction tells a story. Curate your financial narrative with precision.
+          </p>
+        </div>
+        <a
+          href="create"
+          class="flex items-center gap-2 bg-gradient-to-br from-primary to-primary-container text-white px-6 py-3 lg:px-8 lg:py-4 rounded-xl font-bold hover:opacity-90 transition-all active:scale-95 shrink-0"
+        >
+          <span class="material-symbols-outlined">add</span>
+          New Transaction
+        </a>
       </div>
-      <div class="flex gap-2 mb-4 text-sm">
-        <span class="text-gray-500">Sort by:</span>
-        <Link href="?sort=name&order=asc" class="text-indigo-600 hover:underline">Name</Link>
-        <Link href="?sort=amount&order=desc" class="text-indigo-600 hover:underline">Amount</Link>
-        <Link href="?sort=transactionDate&order=desc" class="text-indigo-600 hover:underline">Date</Link>
-        <Link href="?sort=createdAt&order=desc" class="text-indigo-600 hover:underline">Newest</Link>
+
+      {/* Filter chips */}
+      <div class="flex gap-2 overflow-x-auto no-scrollbar">
+        {[
+          { label: "All Activity", href: "?" },
+          { label: "Income", href: "?type=income" },
+          { label: "Expense", href: "?type=expense" },
+        ].map((filter) => (
+          <a
+            key={filter.label}
+            href={filter.href}
+            class="px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-widest bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high transition-colors whitespace-nowrap active:scale-95"
+          >
+            {filter.label}
+          </a>
+        ))}
       </div>
-      <main class="mb-4">
-        {transactions.value.items.length === 0 ? (
-          <EmptyState title="No transactions yet" description="Create your first transaction to get started." />
-        ) : (
-          transactions.value.items.map(transaction => {
-            return (
-              <article class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow">
-                <Link href={`${transaction.id}`}>
-                  <span class="mb-2 text-2xl font-bold tracking-tight text-gray-900 ">{transaction.name}</span>
-                </Link>
-                <span class="mb-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded ms-3">{transaction.isExpense ? 'Expense' : 'Income'}</span>
-                <p class="mb-3 font-normal text-gray-700">
-                  {transaction.description}
-                  {transaction.account.name} - {GetFormatterForCurrency(transaction.currency).format(fromCents(transaction.amount))}
+
+      {/* Transaction List */}
+      {transactions.value.items.length === 0 ? (
+        <EmptyState title="No transactions yet" description="Create your first transaction to get started." icon="receipt_long" />
+      ) : (
+        <div class="space-y-1">
+          {transactions.value.items.map((tx) => (
+            <div
+              key={tx.id}
+              class="flex items-center p-4 bg-surface-container-low rounded-xl group active:scale-[0.98] transition-all"
+            >
+              <div class={[
+                "w-12 h-12 rounded-full flex items-center justify-center shrink-0",
+                tx.isExpense ? "bg-surface-container-highest" : "bg-on-tertiary-container/10",
+              ].join(" ")}>
+                <span class={[
+                  "material-symbols-outlined",
+                  tx.isExpense ? "text-primary" : "text-on-tertiary-container",
+                ].join(" ")}>
+                  {tx.isExpense ? "shopping_bag" : "account_balance"}
+                </span>
+              </div>
+              <div class="ml-4 flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <a href={`${tx.id}`}>
+                    <p class="font-bold text-[15px] tracking-tight truncate hover:underline">{tx.name}</p>
+                  </a>
+                  <span class={[
+                    "text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md",
+                    tx.isExpense ? "bg-error-container/30 text-error" : "bg-on-tertiary-container/10 text-on-tertiary-container",
+                  ].join(" ")}>
+                    {tx.isExpense ? "Expense" : "Income"}
+                  </span>
+                </div>
+                <p class="text-on-surface-variant text-[12px] truncate">
+                  {tx.account.name} &middot; {formatDate(tx.transactionDate)}
                 </p>
-                <Link href={`${transaction.id}`} class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  Detail
-                  <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9" />
-                  </svg>
-                </Link>
-                <Form action={deleteTransaction} class="inline-flex">
-                  <input type="hidden" name="id" value={transaction.id} />
-                  <button type="submit" class="inline-flex items-center px-3 py-2 mx-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300">
-                    Delete
+              </div>
+              <div class="text-right ml-3 flex items-center gap-2">
+                <p class={[
+                  "font-black",
+                  tx.isExpense ? "text-primary" : "text-on-tertiary-container",
+                ].join(" ")}>
+                  {tx.isExpense ? "-" : "+"}{GetFormatterForCurrency(tx.currency).format(fromCents(tx.amount))}
+                </p>
+                <div class="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <a href={`${tx.id}`} class="p-1 text-outline hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined text-sm">edit</span>
+                  </a>
+                  <button type="button" onClick$={() => { deleteId.value = tx.id; showDeleteDialog.value = true; }} class="p-1 text-outline hover:text-error transition-colors">
+                    <span class="material-symbols-outlined text-sm">delete</span>
                   </button>
-                </Form>
-              </article>
-            )
-          })
-        )}
-      </main>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <Pagination currentPage={transactions.value.page} totalPages={transactions.value.totalPages} baseUrl="/management/transactions" />
-    </section>
+
+      <ConfirmDialog open={showDeleteDialog} title="Delete transaction?" description="This transaction will be permanently removed and the account balance will be adjusted.">
+        <Form action={deleteTransaction} onSubmitCompleted$={() => { showDeleteDialog.value = false; deleteId.value = null; }}>
+          <input type="hidden" name="id" value={deleteId.value ?? ''} />
+          <button type="submit" class="w-full py-3 rounded-xl font-bold text-sm bg-error text-on-error active:scale-95 transition-all">Delete</button>
+        </Form>
+      </ConfirmDialog>
+    </div>
   );
 });
 
 export const head: DocumentHead = {
   title: "BudgetWise | Transactions",
-  meta: [
-    {
-      name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
-    },
-  ],
+  meta: [{ name: "description", content: "Manage your financial transactions" }],
 };

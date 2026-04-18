@@ -1,6 +1,7 @@
 import { component$ } from "@builder.io/qwik";
-import { Form, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, Link, routeAction$, routeLoader$, type DocumentHead } from "@builder.io/qwik-city";
 import { getAuthenticatedUser } from "~/lib/auth";
+import { MANAGEMENT_ROUTES } from "~/lib/constants";
 import orm from "~/lib/orm";
 import { fromCents } from "~/lib/utils";
 
@@ -19,12 +20,12 @@ export const useAccount = routeLoader$(async ({ params, fail, sharedMap }) => {
       balance: true,
       currency: true,
     }
-  })
+  });
 
   if (!account) return fail(404, { message: 'Account not found' });
 
   return account;
-})
+});
 
 export const useUpdateAccount = routeAction$(async (data, { params, fail, sharedMap }) => {
   const user = getAuthenticatedUser(sharedMap);
@@ -50,103 +51,113 @@ export default component$(() => {
   const action = useUpdateAccount();
 
   return (
-    <div class="max-w-2xl">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Account Detail</h1>
-      <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 space-y-4">
-        <div>
-          <span class="text-sm text-gray-500 dark:text-gray-400">Name</span>
-          <p class="text-lg font-medium text-gray-900 dark:text-white">{account.value.name}</p>
-        </div>
-        <div>
-          <span class="text-sm text-gray-500 dark:text-gray-400">Account Number</span>
-          <p class="text-lg font-medium text-gray-900 dark:text-white">{account.value.numberAccount}</p>
-        </div>
-        <div>
-          <span class="text-sm text-gray-500 dark:text-gray-400">Type</span>
-          <p class="text-lg font-medium text-gray-900 dark:text-white capitalize">{account.value.type}</p>
-        </div>
-        <div>
-          <span class="text-sm text-gray-500 dark:text-gray-400">Balance</span>
-          <p class="text-2xl font-bold text-gray-900 dark:text-white">{fromCents(account.value.balance as number)}</p>
+    <div class="max-w-lg mx-auto">
+      {/* Header */}
+      <div class="mb-8">
+        <Link href={MANAGEMENT_ROUTES.ACCOUNTS} class="inline-flex items-center gap-1 text-sm text-on-surface-variant hover:text-primary transition-colors mb-4">
+          <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+          Back to accounts
+        </Link>
+        <h1 class="font-headline font-bold text-3xl tracking-tight text-primary mb-2">
+          Account Detail
+        </h1>
+      </div>
+
+      {/* Account info card */}
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow mb-8">
+        <div class="grid grid-cols-2 gap-6">
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Name</p>
+            <p class="text-base font-bold text-primary">{account.value.name}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Account Number</p>
+            <p class="text-base font-bold text-primary">{account.value.numberAccount}</p>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Type</p>
+            <span class="text-[10px] font-bold uppercase tracking-widest text-on-secondary-container bg-secondary-container/30 px-2 py-0.5 rounded-md">
+              {account.value.type}
+            </span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Balance</p>
+            <p class="text-2xl font-black tracking-tighter text-primary">
+              ${fromCents(account.value.balance as number).toLocaleString("en-US", { minimumFractionDigits: 2 })}
+            </p>
+          </div>
         </div>
       </div>
 
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white mt-8 mb-4">Update Account</h2>
-      <Form action={action} class="space-y-6">
-        <div>
-          <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Name</label>
-          <div class="mt-2">
+      {/* Update form */}
+      <div class="bg-surface-container-lowest rounded-[2rem] p-8 editorial-shadow">
+        <h2 class="font-bold text-lg tracking-tight text-primary mb-6">Update Account</h2>
+
+        {action.value?.success && (
+          <div class="mb-6 p-4 bg-on-tertiary-container/10 rounded-xl">
+            <p class="text-on-tertiary-container text-sm font-medium">Account updated successfully.</p>
+          </div>
+        )}
+
+        <Form action={action} class="space-y-5">
+          <div>
+            <label for="name" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Name</label>
             <input
-              type="text"
-              id="name"
-              name="name"
+              type="text" id="name" name="name"
               value={account.value.name ?? action.formData?.get('name')}
-              class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20"
             />
           </div>
-        </div>
-        <div>
-          <label for="numberAccount" class="block text-sm font-medium leading-6 text-gray-900">Account Number</label>
-          <div class="mt-2">
+          <div>
+            <label for="numberAccount" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Account Number</label>
             <input
-              type="text"
-              id="numberAccount"
-              name="numberAccount"
+              type="text" id="numberAccount" name="numberAccount"
               value={account.value.numberAccount ?? action.formData?.get('numberAccount')}
-              class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20"
             />
           </div>
-        </div>
-        <div>
-          <label for="type" class="block text-sm font-medium leading-6 text-gray-900">Type</label>
-          <div class="mt-2">
+          <div>
+            <label for="type" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Type</label>
             <input
-              type="text"
-              id="type"
-              name="type"
+              type="text" id="type" name="type"
               value={account.value.type ?? action.formData?.get('type')}
-              class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20"
             />
           </div>
-        </div>
-        <div>
-          <label for="currency" class="block text-sm font-medium leading-6 text-gray-900">Currency</label>
-          <div class="mt-2">
+          <div>
+            <label for="currency" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Currency</label>
             <input
-              type="text"
-              id="currency"
-              name="currency"
+              type="text" id="currency" name="currency"
               value={account.value.currency ?? action.formData?.get('currency')}
-              class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20"
             />
           </div>
-        </div>
-        <div>
-          <label for="balance" class="block text-sm font-medium leading-6 text-gray-900">Balance</label>
-          <div class="mt-2">
+          <div>
+            <label for="balance" class="block text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Balance</label>
             <input
-              type="number"
-              id="balance"
-              name="balance"
+              type="number" id="balance" name="balance"
               value={fromCents(account.value.balance as number) ?? action.formData?.get('balance')}
-              class="block w-full rounded-md border-0 py-1.5 px-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              class="block w-full bg-surface-container-low border border-outline-variant/15 rounded-xl px-4 py-3 text-sm text-on-surface transition-all duration-200 focus:outline-none focus:bg-surface-container-highest focus:border-outline-variant/40 focus:ring-1 focus:ring-primary/20"
             />
           </div>
-        </div>
-        <div>
-          <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Update</button>
-        </div>
-      </Form>
+          <button
+            type="submit"
+            class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold active:scale-95 transition-all"
+          >
+            Update Account
+          </button>
+        </Form>
+      </div>
     </div>
-  )
+  );
 });
 
 export const head: DocumentHead = {
-  title: "BudgetWise | Detail account",
+  title: "BudgetWise | Account Detail",
   meta: [
     {
       name: "description",
-      content: "A personal finance app that tracks expenses, creates budgets and provides money-saving tips",
+      content: "View and update account details",
     },
   ],
 };

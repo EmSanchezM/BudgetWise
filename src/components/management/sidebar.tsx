@@ -1,13 +1,11 @@
 import { component$, type Signal } from "@builder.io/qwik";
-import { type ActionStore } from "@builder.io/qwik-city";
 import { NavItem } from "./nav-item";
 
 export interface SidebarProps {
-  logoutAction: ActionStore<Record<string, never>, Record<string, never>>;
   isOpen: Signal<boolean>;
 }
 
-export const Sidebar = component$<SidebarProps>(({ logoutAction, isOpen }) => {
+export const Sidebar = component$<SidebarProps>(({ isOpen }) => {
   return (
     <aside
       id="logo-sidebar"
@@ -58,7 +56,6 @@ export const Sidebar = component$<SidebarProps>(({ logoutAction, isOpen }) => {
             href="#"
             label="Logout"
             icon="logout"
-            logoutAction={logoutAction}
           />
         </ul>
       </div>
